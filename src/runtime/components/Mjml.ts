@@ -88,7 +88,6 @@ export default defineComponent({
       },
       containerWidth: '600px',
       setBackgroundColor(color: string) {
-        console.log('Background color set to', color)
         useHead({
           bodyAttrs: {
             style: `word-spacing:normal;background-color:${color};`,
