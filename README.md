@@ -1,4 +1,4 @@
-# @nuxt/mjml
+# nuxt-mjml
 
 MJML implementation as a Nuxt module.
 
