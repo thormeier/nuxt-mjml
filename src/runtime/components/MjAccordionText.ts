@@ -1,5 +1,5 @@
 import MjmlAccordionText from 'mjml-accordion-snyk'
 
-import setupMjmlComponent from '../../../helper/setupMjmlComponent'
+import setupMjmlComponent from '../helper/setupMjmlComponent'
 
 export default setupMjmlComponent(MjmlAccordionText)

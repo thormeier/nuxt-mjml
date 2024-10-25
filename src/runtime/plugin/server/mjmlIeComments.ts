@@ -2,11 +2,7 @@ export default defineNitroPlugin((nitroApp) => {
   const config = useRuntimeConfig()
   const routeMatcher = config?.public?.mjml?.serverOnlyRouteMatcher
 
-  console.log(config)
-
   nitroApp.hooks.hook('render:html', (html, { event }) => {
-    console.log(event._path, event._path.match(routeMatcher))
-
     if (routeMatcher && event._path.match(routeMatcher)) {
       html.head.unshift(`
     <!--[if !mso]><!-->

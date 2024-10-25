@@ -15,8 +15,6 @@ export default defineNuxtModule<ModuleOptions>({
 
     const resolver = createResolver(import.meta.url)
 
-    addServerPlugin(resolver.resolve('runtime/plugin/server/mjmlIeComments'))
-
     addComponent({
       name: 'mjml',
       filePath: resolver.resolve('runtime/components/Mjml'),
