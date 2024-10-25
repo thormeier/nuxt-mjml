@@ -1,4 +1,3 @@
-
 import MjmlSection from 'mjml-section-snyk'
 
 import setupMjmlComponent from '../../../helper/setupMjmlComponent'

@@ -6,15 +6,15 @@ export default defineComponent({
       type: Boolean,
       default: () => false,
       required: false,
-    }
+    },
   },
   setup(props, { slots }) {
     useHead({
       bodyAttrs: {
-        style: `word-spacing:normal;`
+        style: `word-spacing:normal;`,
       },
       htmlAttrs: {
-        xmlns: 'http://www.w3.org/1999/xhtml',
+        'xmlns': 'http://www.w3.org/1999/xhtml',
         'xmlns:v': 'urn:schemas-microsoft-com:vml',
         'xmlns:o': 'urn:schemas-microsoft-com:office:office',
       },
@@ -52,7 +52,7 @@ export default defineComponent({
               display: block;
               margin: 13px 0;
             }
-          `
+          `,
         },
       ],
     })
@@ -69,10 +69,10 @@ export default defineComponent({
         fonts: {
           'Open Sans': 'https://fonts.googleapis.com/css?family=Open+Sans:300,400,500,700',
           'Droid Sans': 'https://fonts.googleapis.com/css?family=Droid+Sans:300,400,500,700',
-          Lato: 'https://fonts.googleapis.com/css?family=Lato:300,400,500,700',
-          Roboto: 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700',
-          Ubuntu: 'https://fonts.googleapis.com/css?family=Ubuntu:300,400,500,700',
-          Inter: 'https://fonts.googleapis.com/css?family=Inter:300,400,500,700'
+          'Lato': 'https://fonts.googleapis.com/css?family=Lato:300,400,500,700',
+          'Roboto': 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700',
+          'Ubuntu': 'https://fonts.googleapis.com/css?family=Ubuntu:300,400,500,700',
+          'Inter': 'https://fonts.googleapis.com/css?family=Inter:300,400,500,700',
         },
         inlineStyle: [],
         headStyle: {},
@@ -91,11 +91,11 @@ export default defineComponent({
         console.log('Background color set to', color)
         useHead({
           bodyAttrs: {
-            style: `word-spacing:normal;background-color:${color};`
-          }
+            style: `word-spacing:normal;background-color:${color};`,
+          },
         })
       },
-      addMediaQuery(className: string, { parsedWidth, unit }: { parsedWidth: number, unit: 'px'|'%' }) {
+      addMediaQuery(className: string, { parsedWidth, unit }: { parsedWidth: number, unit: 'px' | '%' }) {
         const baseMediaQuery = `
           .${className} {
             width: ${parsedWidth}${unit} !important;
@@ -110,33 +110,33 @@ export default defineComponent({
                 @media only screen and (min-width:480px) {
                   ${baseMediaQuery}
                 }
-              `
+              `,
           },
           {
             media: 'screen and (min-width:480px)',
-            innerHTML: `.moz-text-html ${baseMediaQuery}`
+            innerHTML: `.moz-text-html ${baseMediaQuery}`,
           },
         ]
 
         if (props.forceOWADesktop) {
           addedStyleTags.push({
             type: 'text/css',
-            innerHTML: `[owa] ${baseMediaQuery}`
+            innerHTML: `[owa] ${baseMediaQuery}`,
           })
         }
 
         useHead({
-          style: addedStyleTags
+          style: addedStyleTags,
         })
       },
-      addHeadStyle(identifier, headStyle) {
+      addHeadStyle() {
         // No component actually uses this.
         console.warn('Not implemented: addHeadStyle')
       },
     })
 
     return () => h('div', [slots.default()])
-  }
+  },
 })
 
 /*

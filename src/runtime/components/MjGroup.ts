@@ -1,4 +1,3 @@
-
 import MjmlGroup from 'mjml-group-snyk'
 
 import setupMjmlComponent from '../../../helper/setupMjmlComponent'

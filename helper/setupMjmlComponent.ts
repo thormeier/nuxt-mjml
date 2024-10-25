@@ -1,8 +1,10 @@
-import { ComponentObjectPropsOptions, h, createCommentVNode } from '@vue/runtime-core'
-import parse, { DOMNode } from 'html-dom-parser'
+import type { ComponentObjectPropsOptions } from '@vue/runtime-core'
+import { h, createCommentVNode } from '@vue/runtime-core'
+import type { DOMNode } from 'html-dom-parser'
+import parse from 'html-dom-parser'
 import { provide, inject } from 'vue'
+import type { MjmlComponentAttributes, MjmlUnderstandableVueChild, MjmlComponent, MjmlChildRenderFunction } from '../types'
 import camelToKebab from './camelToKebabCase'
-import type { MjmlComponentAttributes, MjmlUnderstandableVueChild, MjmlComponent } from '../types'
 
 function mjmlComponentAttributesToVuePropsDefinitions(mjmlComponentAttributes: MjmlComponentAttributes, defaultAttributes: MjmlComponentAttributes): ComponentObjectPropsOptions {
   return Object.fromEntries(Object.entries(mjmlComponentAttributes).map(([k, attrType]) => [k, {
@@ -22,26 +24,26 @@ function mjmlComponentAttributesToVuePropsDefinitions(mjmlComponentAttributes: M
         const unitRegexp = /^(?:unit|unitWithNegative)\(([^)]+)\)/
         const units = attrType.match(unitRegexp)[1].split(',')
 
-        return value.split(' ').map(v => {
+        return value.split(' ').map((v) => {
           return v === '0' || units.some(unit => v.endsWith(unit))
         })
       }
 
       if (attrType.startsWith('enum')) {
-        const choiceRegexp = /^(?:enum)\(([^)]+)\)/
+        const choiceRegexp = /^enum\(([^)]+)\)/
         const choices = attrType.match(choiceRegexp)[1].split(',')
 
-        return choices.some(choice => value === choice)
+        return choices.includes(value)
       }
 
       return false
-    }
+    },
   }]))
 }
 
 function getVueRendered(h: h, mjmlDom: DOMNode[], defaultSlot: Slot, componentName: string): ReturnType<h>[] {
   function mjmlDomTreeToVueRender(h: h, mjmlDom: DOMNode[], isRoot: boolean): ReturnType<h>[] {
-    return mjmlDom.filter(el => el.type !== 'text').map(el => {
+    return mjmlDom.filter(el => el.type !== 'text').map((el) => {
       if (el.type === 'tag') {
         if (isRoot) {
           el.attribs['data-mjml-tag'] = componentName
@@ -50,7 +52,7 @@ function getVueRendered(h: h, mjmlDom: DOMNode[], defaultSlot: Slot, componentNa
         return h(
           el.name,
           el.attribs,
-          mjmlDomTreeToVueRender(h, el.children, componentName, false)
+          mjmlDomTreeToVueRender(h, el.children, componentName, false),
         )
       }
 
@@ -94,12 +96,12 @@ export default function setupMjmlComponent(mjmlComponent: MjmlComponent, hasColu
       // a) we can't exactly use props
       // b) to allow for deeply nested mjml components in vanilla-Vue components
       const parentChildRenderer = inject('mjmlChildRenderFunction', null)
-      const numberOfSiblings = inject('numberOfSiblings',1)
+      const numberOfSiblings = inject('numberOfSiblings', 1)
       const mjmlContext = inject('mjmlContext', {})
 
       const childInstances = ref<MjmlUnderstandableVueChild[]>([])
-      const childRenderFunction = ref<Function|null>(null)
-      const currentChildIndex = ref<number|undefined>(undefined)
+      const childRenderFunction = ref<MjmlChildRenderFunction | null>(null)
+      const currentChildIndex = ref<number | undefined>(undefined)
 
       const mjmlComponentArgs = computed(() => {
         const mjmlProps = {
@@ -122,7 +124,7 @@ export default function setupMjmlComponent(mjmlComponent: MjmlComponent, hasColu
                 v,
               ]),
           ),
-          props: mjmlProps
+          props: mjmlProps,
         }
 
         if (mjmlComponent.endingTag) {
@@ -141,7 +143,7 @@ export default function setupMjmlComponent(mjmlComponent: MjmlComponent, hasColu
 
       watch(mjmlComponentInstance, (newValue) => {
         if (!mjmlComponent.endingTag) {
-          newValue.renderChildren = (_: any[], options: { renderer: (child: MjmlUnderstandableVueChild) => {} }) => {
+          newValue.renderChildren = (_: MjmlUnderstandableVueChild[], options: { renderer: MjmlChildRenderFunction }) => {
             childRenderFunction.value = options.renderer
 
             return '<!--[SLOT CONTENT]-->'
@@ -150,8 +152,8 @@ export default function setupMjmlComponent(mjmlComponent: MjmlComponent, hasColu
       })
 
       if (!mjmlComponent.endingTag) {
-        mjmlComponentInstance.value.renderChildren = (_: any[], options: { renderer: (child: MjmlUnderstandableVueChild) => {} }) => {
-          childRenderFunction.value = options ? options.renderer : (component) => component.render()
+        mjmlComponentInstance.value.renderChildren = (_: MjmlUnderstandableVueChild[], options: { renderer: MjmlChildRenderFunction }) => {
+          childRenderFunction.value = options ? options.renderer : component => component.render()
 
           return '<!--[SLOT CONTENT]-->'
         }
