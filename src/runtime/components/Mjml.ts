@@ -1,4 +1,6 @@
 import { provide } from 'vue'
+import { h, defineComponent } from '@vue/runtime-core'
+import { useHead } from '@unhead/vue'
 
 export default defineComponent({
   props: {

@@ -1,8 +1,8 @@
 import type { ComponentObjectPropsOptions } from '@vue/runtime-core'
-import { h, createCommentVNode } from '@vue/runtime-core'
+import { h, createCommentVNode, defineComponent } from '@vue/runtime-core'
 import type { DOMNode } from 'html-dom-parser'
 import parse from 'html-dom-parser'
-import { provide, inject } from 'vue'
+import { provide, inject, ref, computed, watch } from 'vue'
 import type { MjmlComponentAttributes, MjmlUnderstandableVueChild, MjmlComponent, MjmlChildRenderFunction } from '../types'
 import camelToKebab from './camelToKebabCase'
 
