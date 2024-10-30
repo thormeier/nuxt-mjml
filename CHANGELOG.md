@@ -1,6 +1,10 @@
 # Changelog
 
 
+## v1.0.6
+
+[compare changes](https://github.com/thormeier/nuxt-mjml/compare/v1.0.5...v1.0.6)
+
 ## v1.0.5
 
 [compare changes](https://github.com/thormeier/nuxt-mjml/compare/v1.0.4...v1.0.5)
