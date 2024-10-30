@@ -131,5 +131,9 @@ export default defineNuxtModule<ModuleOptions>({
       name: 'mj-text',
       filePath: resolver.resolve('runtime/components/MjText'),
     })
+    addComponent({
+      name: 'mj-wrapper',
+      filePath: resolver.resolve('runtime/components/MjWrapper'),
+    })
   },
 })

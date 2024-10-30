@@ -11,13 +11,21 @@ function mjmlComponentAttributesToVuePropsDefinitions(mjmlComponentAttributes: M
     type: String,
     required: false,
     default: defaultAttributes[k],
-    validator: (value: string) => {
+    validator: (value: string | undefined) => {
+      if (value === undefined) {
+        return true
+      }
+
       if (attrType === 'string') {
         return true
       }
 
       if (attrType === 'color') {
-        return value.startsWith('rgb(') || (value.startsWith('#') && (value.length === 7 || value.length === 4))
+        return value === 'none' || value.startsWith('rgb(') || (value.startsWith('#') && (value.length === 7 || value.length === 4))
+      }
+
+      if (attrType === 'integer') {
+        return !isNaN(parseInt(value, 10))
       }
 
       if (attrType.startsWith('unit')) {
@@ -41,7 +49,7 @@ function mjmlComponentAttributesToVuePropsDefinitions(mjmlComponentAttributes: M
   }]))
 }
 
-function getVueRendered(h: h, mjmlDom: DOMNode[], defaultSlot: Slot, componentName: string): ReturnType<h>[] {
+function getVueRendered(h: h, mjmlDom: DOMNode[], defaultSlot: Slot, componentName: string, rootAttribs?: { [key: string]: string }): ReturnType<h>[] {
   function mjmlDomTreeToVueRender(h: h, mjmlDom: DOMNode[], isRoot: boolean): ReturnType<h>[] {
     return mjmlDom.filter(el => el.type !== 'text').map((el) => {
       if (el.type === 'tag') {
@@ -49,9 +57,18 @@ function getVueRendered(h: h, mjmlDom: DOMNode[], defaultSlot: Slot, componentNa
           el.attribs['data-mjml-tag'] = componentName
         }
 
+        let attribs = el.attribs
+
+        if (isRoot && rootAttribs) {
+          attribs = {
+            ...el.attribs,
+            ...rootAttribs,
+          }
+        }
+
         return h(
           el.name,
-          el.attribs,
+          attribs,
           mjmlDomTreeToVueRender(h, el.children, componentName, false),
         )
       }
@@ -77,6 +94,12 @@ export default function setupMjmlComponent(mjmlComponent: MjmlComponent, hasColu
     mjmlComponent.defaultAttributes ? mjmlComponent.defaultAttributes : {},
   )
 
+  vueComponentProps['data-v-inspector'] = {
+    type: String,
+    required: false,
+    default: () => undefined,
+  }
+
   if (hasColumns) {
     vueComponentProps.numberOfColumns = {
       type: Number,
@@ -85,6 +108,14 @@ export default function setupMjmlComponent(mjmlComponent: MjmlComponent, hasColu
       validator: (value: number) => {
         return value > 0
       },
+    }
+  }
+
+  if (mjmlComponent.componentName === 'mj-column') {
+    vueComponentProps.mobileWidth = {
+      type: String,
+      required: false,
+      default: () => undefined,
     }
   }
 
@@ -120,7 +151,7 @@ export default function setupMjmlComponent(mjmlComponent: MjmlComponent, hasColu
             Object.entries(props)
               .filter(([_, v]) => v !== undefined)
               .map(([k, v]) => [
-                camelToKebab(k),
+                k === 'mobileWidth' ? k : camelToKebab(k),
                 v,
               ]),
           ),
@@ -160,7 +191,7 @@ export default function setupMjmlComponent(mjmlComponent: MjmlComponent, hasColu
       }
 
       const mjmlDom = computed(() => {
-        const rendered = parentChildRenderer ? parentChildRenderer.value(mjmlComponentInstance.value) : mjmlComponentInstance.value.render()
+        const rendered = parentChildRenderer && parentChildRenderer.value ? parentChildRenderer.value(mjmlComponentInstance.value) : mjmlComponentInstance.value.render()
 
         return parse(rendered, 'text/html')
       })
@@ -172,7 +203,9 @@ export default function setupMjmlComponent(mjmlComponent: MjmlComponent, hasColu
       provide('mjmlChildRenderFunction', childRenderFunction)
       provide('numberOfSiblings', numberOfColumns)
 
-      return () => getVueRendered(h, mjmlDom.value, slots.default, mjmlComponent.componentName)
+      return () => getVueRendered(h, mjmlDom.value, slots.default, mjmlComponent.componentName, {
+        'data-v-inspector': props['data-v-inspector'],
+      })
     },
   })
 }
