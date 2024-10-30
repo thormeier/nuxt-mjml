@@ -1,5 +1,5 @@
 <template>
-  <mjml>
+  <mjml :used-fonts="['Inter', 'Droid Sans', 'helvetica']">
     <mj-body background-color="#F2F2F2">
       <mj-section padding="10px 0 20px 0">
         <mj-column>

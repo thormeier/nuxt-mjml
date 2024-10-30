@@ -2,6 +2,15 @@ import { provide } from 'vue'
 import { h, defineComponent } from '@vue/runtime-core'
 import { useHead } from '@unhead/vue'
 
+const fonts =  {
+  'Open Sans': 'https://fonts.googleapis.com/css?family=Open+Sans:300,400,500,700',
+  'Droid Sans': 'https://fonts.googleapis.com/css?family=Droid+Sans:300,400,500,700',
+  'Lato': 'https://fonts.googleapis.com/css?family=Lato:300,400,500,700',
+  'Roboto': 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700',
+  'Ubuntu': 'https://fonts.googleapis.com/css?family=Ubuntu:300,400,500,700',
+  'Inter': 'https://fonts.googleapis.com/css?family=Inter:300,400,500,700',
+}
+
 export default defineComponent({
   props: {
     forceOWADesktop: {
@@ -9,9 +18,35 @@ export default defineComponent({
       default: () => false,
       required: false,
     },
+    containerWidth: {
+      type: Number,
+      default: () => 600,
+      required: false,
+    },
+    usedFonts: {
+      type: Array,
+      default: () => [],
+      required: false,
+    }
   },
   setup(props, { slots }) {
+    const validFonts = props.usedFonts.filter(name => !!fonts[name])
+
+    const fontLinks = validFonts.map(name => ({
+      rel: 'stylesheet',
+      type: 'text/css',
+      href: fonts[name],
+    }))
+
+    const fontStyleTags = validFonts.map(name => ({
+      type: 'text/css',
+      innerHTML: `
+    @import url(${fonts[name]});
+      `
+    }))
+
     useHead({
+      link: fontLinks,
       bodyAttrs: {
         style: `word-spacing:normal;`,
       },
@@ -21,6 +56,7 @@ export default defineComponent({
         'xmlns:o': 'urn:schemas-microsoft-com:office:office',
       },
       style: [
+        ...fontStyleTags,
         {
           innerHTML: `
             #outlook a {
@@ -59,6 +95,8 @@ export default defineComponent({
       ],
     })
 
+    const providedUseHead = useHead
+
     provide('mjmlContext', {
       globalData: {
         backgroundColor: '',
@@ -68,14 +106,7 @@ export default defineComponent({
         classesDefault: {},
         defaultAttributes: {},
         htmlAttributes: {},
-        fonts: {
-          'Open Sans': 'https://fonts.googleapis.com/css?family=Open+Sans:300,400,500,700',
-          'Droid Sans': 'https://fonts.googleapis.com/css?family=Droid+Sans:300,400,500,700',
-          'Lato': 'https://fonts.googleapis.com/css?family=Lato:300,400,500,700',
-          'Roboto': 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700',
-          'Ubuntu': 'https://fonts.googleapis.com/css?family=Ubuntu:300,400,500,700',
-          'Inter': 'https://fonts.googleapis.com/css?family=Inter:300,400,500,700',
-        },
+        fonts,
         inlineStyle: [],
         headStyle: {},
         componentsHeadStyle: [],
@@ -88,9 +119,9 @@ export default defineComponent({
         lang: 'de',
         dir: 'ltr',
       },
-      containerWidth: '600px',
+      containerWidth: `${props.containerWidth}px`,
       setBackgroundColor(color: string) {
-        useHead({
+        providedUseHead({
           bodyAttrs: {
             style: `word-spacing:normal;background-color:${color};`,
           },
@@ -126,7 +157,7 @@ export default defineComponent({
           })
         }
 
-        useHead({
+        providedUseHead({
           style: addedStyleTags,
         })
       },
