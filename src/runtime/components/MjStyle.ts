@@ -2,7 +2,7 @@ import { h, defineComponent } from '@vue/runtime-core'
 import { useHead } from '@unhead/vue'
 
 export default defineComponent({
-  setup (_, {slots}) {
+  setup(_, { slots }) {
     const style = slots.default()
 
     if (style.length > 0 && style[0].children) {
@@ -11,8 +11,8 @@ export default defineComponent({
           {
             type: 'text/css',
             innerHTML: title[0].children,
-          }
-        ]
+          },
+        ],
       })
     }
 

@@ -32,7 +32,7 @@ export default defineComponent({
       type: Number,
       default: () => 480,
       required: false,
-    }
+    },
   },
   setup(props, { slots }) {
     const validFonts = props.usedFonts.filter(name => !!fonts[name])

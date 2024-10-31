@@ -13,15 +13,15 @@ export default defineComponent({
       default: () => '',
     },
   },
-  setup (props) {
+  setup(props) {
     useHead({
       style: [
         {
           rel: 'stylesheet',
           type: 'text/css',
           href: props.href,
-        }
-      ]
+        },
+      ],
     })
 
     return () => h('div', [])
