@@ -250,7 +250,7 @@ export default function setupMjmlComponent(mjmlComponent: MjmlComponent, hasColu
       })
 
       const headSettings = computed(() => {
-        const headSettings: { styles?: [], bodyAttrs?: { style: string } } = {}
+        const headSettings: { style?: [], bodyAttrs?: { style: string } } = {}
 
         if (mjmlComponent.componentName === 'mj-body' && bodyBackgroundColor.value) {
           headSettings.bodyAttrs = {
@@ -259,7 +259,7 @@ export default function setupMjmlComponent(mjmlComponent: MjmlComponent, hasColu
         }
 
         if (mjmlComponent.componentName === 'mj-column' || mjmlComponent.componentName === 'mj-group') {
-          headSettings.styles = mjmlMediaQueryHeadStyles.value
+          headSettings.style = mjmlMediaQueryHeadStyles.value
         }
 
         return headSettings
