@@ -64,32 +64,24 @@ export default defineNuxtModule<ModuleOptions>({
       filePath: resolver.resolve('runtime/components/MjGroup'),
     })
     addComponent({
-      name: 'mj-head-attributes',
-      filePath: resolver.resolve('runtime/components/MjHeadAttributes'),
-    })
-    addComponent({
       name: 'mj-head-breakpoint',
       filePath: resolver.resolve('runtime/components/MjHeadBreakpoint'),
     })
     addComponent({
-      name: 'mj-head-font',
-      filePath: resolver.resolve('runtime/components/MjHeadFont'),
-    })
-    addComponent({
-      name: 'mj-head-html-attributes',
-      filePath: resolver.resolve('runtime/components/MjHeadHtmlAttributes'),
+      name: 'mj-font',
+      filePath: resolver.resolve('runtime/components/MjFont'),
     })
     addComponent({
       name: 'mj-head',
       filePath: resolver.resolve('runtime/components/MjHead'),
     })
     addComponent({
-      name: 'mj-head-style',
-      filePath: resolver.resolve('runtime/components/MjHeadStyle'),
+      name: 'mj-style',
+      filePath: resolver.resolve('runtime/components/MjStyle'),
     })
     addComponent({
-      name: 'mj-head-title',
-      filePath: resolver.resolve('runtime/components/MjHeadTitle'),
+      name: 'mj-title',
+      filePath: resolver.resolve('runtime/components/MjTitle'),
     })
     addComponent({
       name: 'mj-hero',

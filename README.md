@@ -12,22 +12,18 @@ This things is **highly experimental**! Use at your own risk!
 
 ```
 <mj-section :number-of-columns="2">
-    <mj-column>...</mj-column>
-    <mj-column>...</mj-column>
+  <mj-column>...</mj-column>
+  <mj-column>...</mj-column>
 </mj-section>
 ```
 
 ## Missing functionality
 
-The following components are either expected to be broken or need extra implementation:
+The following components are not implemented because they have simpler solutions that can be offered via Vue:
 
- * mj-head
- * mj-head-attributes
- * mj-head-breakpoints
- * mj-head-font
- * mj-head-html-attributes
- * mj-head-style
- * mj-head-title
+ * mj-attributes - Can be achieved via using components
+ * mj-breakpoints - Is achieved via setting the `breakpoint` attribute on `<mjml>`.
+ * mj-html-attributes - Can be achieved via component props
 
 ## Use MJML context in custom component
 
@@ -36,14 +32,3 @@ In a child component of `<mjml>` use:
 ```
 const mjmlContext = inject('mjmlContext')
 ```
-
-It offers the following methods:
-
- * `addMediaQuery`
- * `addHeadStyle`
- * `addComponentHeadStyle`
- * `setBackgroundColor`
- * `addHeadRaw`
- * `setTitle`
-
-The entirety of the global data can be accessed via `globalData`

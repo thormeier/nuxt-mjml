@@ -1,5 +1,7 @@
-import MjmlHead from 'mjml-head-snyk'
+import { h, defineComponent } from '@vue/runtime-core'
 
-import setupMjmlComponent from '../helper/setupMjmlComponent'
-
-export default setupMjmlComponent(MjmlHead)
+export default defineComponent({
+  setup (_, {slots}) {
+    return () => h('div', slots.default())
+  },
+})

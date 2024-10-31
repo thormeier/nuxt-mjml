@@ -1,5 +1,8 @@
 <template>
   <mjml :used-fonts="['Inter', 'Droid Sans', 'helvetica']">
+    <mj-head>
+      <mj-title>Hello, Cards Layout!</mj-title>
+    </mj-head>
     <mj-body background-color="#f2f2f2">
       <mj-section padding="10px 0 20px 0">
         <mj-column>

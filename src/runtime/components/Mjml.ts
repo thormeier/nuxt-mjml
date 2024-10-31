@@ -28,6 +28,11 @@ export default defineComponent({
       default: () => [],
       required: false,
     },
+    breakpoint: {
+      type: Number,
+      default: () => 480,
+      required: false,
+    }
   },
   setup(props, { slots }) {
     const validFonts = props.usedFonts.filter(name => !!fonts[name])
@@ -99,7 +104,7 @@ export default defineComponent({
       globalData: {
         backgroundColor: '',
         beforeDoctype: '',
-        breakpoint: '480px',
+        breakpoint: props.breakpoint,
         classes: {},
         classesDefault: {},
         defaultAttributes: {},

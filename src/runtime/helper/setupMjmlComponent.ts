@@ -3,9 +3,9 @@ import { h, createCommentVNode, defineComponent } from '@vue/runtime-core'
 import type { DOMNode } from 'html-dom-parser'
 import parse from 'html-dom-parser'
 import { provide, inject, ref, computed, watch } from 'vue'
+import { useHead } from '@unhead/vue'
 import type { MjmlComponentAttributes, MjmlUnderstandableVueChild, MjmlComponent, MjmlChildRenderFunction } from '../types'
 import camelToKebab from './camelToKebabCase'
-import { useHead } from '@unhead/vue'
 
 function mjmlComponentAttributesToVuePropsDefinitions(mjmlComponentAttributes: MjmlComponentAttributes, defaultAttributes: MjmlComponentAttributes): ComponentObjectPropsOptions {
   return Object.fromEntries(Object.entries(mjmlComponentAttributes).map(([k, attrType]) => [k, {
@@ -60,10 +60,13 @@ function getVueRendered(h: h, mjmlDom: DOMNode[], defaultSlot: Slot, componentNa
 
         return h(
           el.name,
-          isRoot && rootAttribs ? el.attribs : {
-            ...el.attribs,
-            ...rootAttribs,
-          },
+          isRoot && rootAttribs
+            ? el.attribs
+            : {
+                ...el.attribs,
+                ...rootAttribs,
+              }
+          ,
           mjmlDomTreeToVueRender(h, el.children, componentName, false),
         )
       }
@@ -83,7 +86,7 @@ function getVueRendered(h: h, mjmlDom: DOMNode[], defaultSlot: Slot, componentNa
   return mjmlDomTreeToVueRender(h, mjmlDom, true)
 }
 
-function toMediaQueryStyleTags(parsedWidth: string, unit: string, className: string, forceOWADesktop: boolean) {
+function toMediaQueryStyleTags(parsedWidth: string, unit: string, className: string, breakpoint: number, forceOWADesktop: boolean) {
   const baseMediaQuery = `.${className} {
       width: ${parsedWidth}${unit} !important;
       max-width: ${parsedWidth}${unit};
@@ -99,7 +102,7 @@ function toMediaQueryStyleTags(parsedWidth: string, unit: string, className: str
 `,
     },
     {
-      media: 'screen and (min-width:480px)',
+      media: `screen and (min-width:480px)`,
       innerHTML: `
   .moz-text-html ${baseMediaQuery}
 `,
@@ -235,7 +238,7 @@ export default function setupMjmlComponent(mjmlComponent: MjmlComponent, hasColu
         const unit = columnClassParts[0] === 'per' ? '%' : 'px'
         const parsedWidth = columnClassParts[1]
 
-        return toMediaQueryStyleTags(parsedWidth, unit, className, forceOWADesktop)
+        return toMediaQueryStyleTags(parsedWidth, unit, className, mjmlContext.globalData.breakpoint, forceOWADesktop)
       })
 
       const bodyBackgroundColor = computed(() => {
@@ -249,9 +252,9 @@ export default function setupMjmlComponent(mjmlComponent: MjmlComponent, hasColu
       const headSettings = computed(() => {
         const headSettings: { styles?: [], bodyAttrs?: { style: string } } = {}
 
-        if (mjmlComponent.componentName === 'mj-body') {
+        if (mjmlComponent.componentName === 'mj-body' && bodyBackgroundColor.value) {
           headSettings.bodyAttrs = {
-            style: `word-spacing:normal;background-color:${bodyBackgroundColor.value};`
+            style: `word-spacing:normal;background-color:${bodyBackgroundColor.value};`,
           }
         }
 
