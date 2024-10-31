@@ -2,7 +2,7 @@ import { provide } from 'vue'
 import { h, defineComponent } from '@vue/runtime-core'
 import { useHead } from '@unhead/vue'
 
-const fonts =  {
+const fonts = {
   'Open Sans': 'https://fonts.googleapis.com/css?family=Open+Sans:300,400,500,700',
   'Droid Sans': 'https://fonts.googleapis.com/css?family=Droid+Sans:300,400,500,700',
   'Lato': 'https://fonts.googleapis.com/css?family=Lato:300,400,500,700',
@@ -27,7 +27,7 @@ export default defineComponent({
       type: Array,
       default: () => [],
       required: false,
-    }
+    },
   },
   setup(props, { slots }) {
     const validFonts = props.usedFonts.filter(name => !!fonts[name])
@@ -42,13 +42,13 @@ export default defineComponent({
       type: 'text/css',
       innerHTML: `
     @import url(${fonts[name]});
-      `
+      `,
     }))
 
     useHead({
       link: fontLinks,
       bodyAttrs: {
-        style: `word-spacing:normal;`,
+        style: `word-spacing:normal;font-size:12px;`,
       },
       htmlAttrs: {
         'xmlns': 'http://www.w3.org/1999/xhtml',
@@ -95,8 +95,6 @@ export default defineComponent({
       ],
     })
 
-    const providedUseHead = useHead
-
     provide('mjmlContext', {
       globalData: {
         backgroundColor: '',
@@ -120,46 +118,13 @@ export default defineComponent({
         dir: 'ltr',
       },
       containerWidth: `${props.containerWidth}px`,
-      setBackgroundColor(color: string) {
-        providedUseHead({
-          bodyAttrs: {
-            style: `word-spacing:normal;background-color:${color};`,
-          },
-        })
+      setBackgroundColor() {
+        // noop, we're handling this in the component itself.
+        return
       },
-      addMediaQuery(className: string, { parsedWidth, unit }: { parsedWidth: number, unit: 'px' | '%' }) {
-        const baseMediaQuery = `
-          .${className} {
-            width: ${parsedWidth}${unit} !important;
-            max-width: ${parsedWidth}${unit};
-          }
-        `
-
-        const addedStyleTags = [
-          {
-            type: 'text/css',
-            innerHTML: `
-                @media only screen and (min-width:480px) {
-                  ${baseMediaQuery}
-                }
-              `,
-          },
-          {
-            media: 'screen and (min-width:480px)',
-            innerHTML: `.moz-text-html ${baseMediaQuery}`,
-          },
-        ]
-
-        if (props.forceOWADesktop) {
-          addedStyleTags.push({
-            type: 'text/css',
-            innerHTML: `[owa] ${baseMediaQuery}`,
-          })
-        }
-
-        providedUseHead({
-          style: addedStyleTags,
-        })
+      addMediaQuery() {
+        // noop, we're handling this in the component itself.
+        return
       },
       addHeadStyle() {
         // No component actually uses this.
@@ -167,78 +132,8 @@ export default defineComponent({
       },
     })
 
+    provide('forceOWADesktop', props.forceOWADesktop)
+
     return () => h('div', [slots.default()])
   },
 })
-
-/*
-export default function () {
-  const fonts = {
-    'Open Sans': 'https://fonts.googleapis.com/css?family=Open+Sans:300,400,500,700',
-    'Droid Sans': 'https://fonts.googleapis.com/css?family=Droid+Sans:300,400,500,700',
-    Lato: 'https://fonts.googleapis.com/css?family=Lato:300,400,500,700',
-    Roboto: 'https://fonts.googleapis.com/css?family=Roboto:300,400,500,700',
-    Ubuntu: 'https://fonts.googleapis.com/css?family=Ubuntu:300,400,500,700',
-    Inter: 'https://fonts.googleapis.com/css?family=Inter:300,400,500,700'
-  }
-
-  const globalData = useState('mjmlGlobalData', () => ({
-    backgroundColor: '',
-    beforeDoctype: '',
-    breakpoint: '480px',
-    classes: {},
-    classesDefault: {},
-    defaultAttributes: {},
-    htmlAttributes: {},
-    fonts,
-    inlineStyle: [],
-    headStyle: {},
-    componentsHeadStyle: [],
-    headRaw: [],
-    mediaQueries: {},
-    preview: '',
-    style: [],
-    title: '',
-    forceOWADesktop: false,
-    lang: 'de',
-    dir: 'ltr',
-  }))
-
-  return {
-    globalData: globalData.value,
-
-    containerWidth: '600px',
-
-    addMediaQuery(className, {
-      parsedWidth,
-      unit
-    }) {
-      globalData.value.mediaQueries[className] = `{ width:${parsedWidth}${unit} !important; max-width: ${parsedWidth}${unit}; }`;
-    },
-
-    addHeadStyle(identifier, headStyle) {
-      globalData.value.headStyle[identifier] = headStyle;
-    },
-
-    addComponentHeadStyle(headStyle) {
-      globalData.value.componentsHeadStyle.push(headStyle);
-    },
-
-    setBackgroundColor: color => {
-      globalData.value.backgroundColor = color;
-    },
-
-    addHeadRaw: (identifier, value) => {
-      globalData.value.push([identifier, value])
-    },
-
-    setTitle: (title) => {
-      globalData.value.title = title
-    },
-
-    setLang: (lang) => {
-      globalData.value.lang = lang
-    },
-  }
-}
- */

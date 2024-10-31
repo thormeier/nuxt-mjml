@@ -1,6 +1,6 @@
 <template>
   <mjml :used-fonts="['Inter', 'Droid Sans', 'helvetica']">
-    <mj-body background-color="#F2F2F2">
+    <mj-body background-color="#f2f2f2">
       <mj-section padding="10px 0 20px 0">
         <mj-column>
           <mj-text
@@ -89,7 +89,6 @@
       </mj-section>
       <mj-section
         background-url="http://nimus.de/share/tpl-card/bg.jpg"
-        vertical-align="middle"
         background-size="cover"
         background-repeat="no-repeat"
       >

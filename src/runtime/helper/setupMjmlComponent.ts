@@ -5,6 +5,7 @@ import parse from 'html-dom-parser'
 import { provide, inject, ref, computed, watch } from 'vue'
 import type { MjmlComponentAttributes, MjmlUnderstandableVueChild, MjmlComponent, MjmlChildRenderFunction } from '../types'
 import camelToKebab from './camelToKebabCase'
+import { useHead } from '@unhead/vue'
 
 function mjmlComponentAttributesToVuePropsDefinitions(mjmlComponentAttributes: MjmlComponentAttributes, defaultAttributes: MjmlComponentAttributes): ComponentObjectPropsOptions {
   return Object.fromEntries(Object.entries(mjmlComponentAttributes).map(([k, attrType]) => [k, {
@@ -25,7 +26,7 @@ function mjmlComponentAttributesToVuePropsDefinitions(mjmlComponentAttributes: M
       }
 
       if (attrType === 'integer') {
-        return !isNaN(parseInt(value, 10))
+        return !Number.isNaN(Number.parseInt(value, 10))
       }
 
       if (attrType.startsWith('unit')) {
@@ -57,18 +58,12 @@ function getVueRendered(h: h, mjmlDom: DOMNode[], defaultSlot: Slot, componentNa
           el.attribs['data-mjml-tag'] = componentName
         }
 
-        let attribs = el.attribs
-
-        if (isRoot && rootAttribs) {
-          attribs = {
-            ...el.attribs,
-            ...rootAttribs,
-          }
-        }
-
         return h(
           el.name,
-          attribs,
+          isRoot && rootAttribs ? el.attribs : {
+            ...el.attribs,
+            ...rootAttribs,
+          },
           mjmlDomTreeToVueRender(h, el.children, componentName, false),
         )
       }
@@ -86,6 +81,39 @@ function getVueRendered(h: h, mjmlDom: DOMNode[], defaultSlot: Slot, componentNa
   }
 
   return mjmlDomTreeToVueRender(h, mjmlDom, true)
+}
+
+function toMediaQueryStyleTags(parsedWidth: string, unit: string, className: string, forceOWADesktop: boolean) {
+  const baseMediaQuery = `.${className} {
+      width: ${parsedWidth}${unit} !important;
+      max-width: ${parsedWidth}${unit};
+    }`
+
+  const styleTags = [
+    {
+      type: 'text/css',
+      innerHTML: `
+  @media only screen and (min-width:480px) {
+    ${baseMediaQuery}
+  }
+`,
+    },
+    {
+      media: 'screen and (min-width:480px)',
+      innerHTML: `
+  .moz-text-html ${baseMediaQuery}
+`,
+    },
+  ]
+
+  if (forceOWADesktop) {
+    styleTags.push({
+      type: 'text/css',
+      innerHTML: `[owa] ${baseMediaQuery}`,
+    })
+  }
+
+  return styleTags
 }
 
 export default function setupMjmlComponent(mjmlComponent: MjmlComponent, hasColumns?: boolean) {
@@ -129,6 +157,7 @@ export default function setupMjmlComponent(mjmlComponent: MjmlComponent, hasColu
       const parentChildRenderer = inject('mjmlChildRenderFunction', null)
       const numberOfSiblings = inject('numberOfSiblings', 1)
       const mjmlContext = inject('mjmlContext', {})
+      const forceOWADesktop = inject('forceOWADesktop', false)
 
       const childInstances = ref<MjmlUnderstandableVueChild[]>([])
       const childRenderFunction = ref<MjmlChildRenderFunction | null>(null)
@@ -195,6 +224,45 @@ export default function setupMjmlComponent(mjmlComponent: MjmlComponent, hasColu
 
         return parse(rendered, 'text/html')
       })
+
+      const mjmlMediaQueryHeadStyles = computed(() => {
+        if (mjmlComponent.componentName !== 'mj-column' && mjmlComponent.componentName !== 'mj-group') {
+          return []
+        }
+
+        const className = mjmlComponentInstance.value.getColumnClass()
+        const columnClassParts = className.replace('mj-column-', '').split('-')
+        const unit = columnClassParts[0] === 'per' ? '%' : 'px'
+        const parsedWidth = columnClassParts[1]
+
+        return toMediaQueryStyleTags(parsedWidth, unit, className, forceOWADesktop)
+      })
+
+      const bodyBackgroundColor = computed(() => {
+        if (mjmlComponent.componentName !== 'mj-body') {
+          return null
+        }
+
+        return mjmlComponentInstance.value.getAttribute('background-color')
+      })
+
+      const headSettings = computed(() => {
+        const headSettings: { styles?: [], bodyAttrs?: { style: string } } = {}
+
+        if (mjmlComponent.componentName === 'mj-body') {
+          headSettings.bodyAttrs = {
+            style: `word-spacing:normal;background-color:${bodyBackgroundColor.value};`
+          }
+        }
+
+        if (mjmlComponent.componentName === 'mj-column' || mjmlComponent.componentName === 'mj-group') {
+          headSettings.styles = mjmlMediaQueryHeadStyles.value
+        }
+
+        return headSettings
+      })
+
+      useHead(headSettings.value)
 
       const numberOfColumns = computed(() => {
         return hasColumns ? props.numberOfColumns : 1
