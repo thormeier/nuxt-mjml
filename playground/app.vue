@@ -1,161 +1,74 @@
 <template>
-  <mjml :used-fonts="['Inter', 'Droid Sans', 'helvetica']">
-    <mj-head>
-      <mj-title>Hello, Cards Layout!</mj-title>
-    </mj-head>
-    <mj-body background-color="#f2f2f2">
-      <mj-section padding="10px 0 20px 0">
-        <mj-column>
-          <mj-text
-            align="center"
-            color="#9B9B9B"
-            font-size="11px"
-          >
-            Writing A Good Headline For Your Advertisement
+  <mjml>
+    <mj-body background-color="#d7dde5">
+      <mj-section full-width="full-width">
+        <mj-column width="66.66666666666666%" vertical-align="middle">
+          <mj-text align="left" font-size="11px" padding-bottom="0px" padding-top="0"><span style="font-size: 11px">[[HEADLINE]]</span></mj-text>
+        </mj-column>
+        <mj-column width="33.33333333333333%" vertical-align="middle">
+          <mj-text align="right" font-size="11px" padding-bottom="0px" padding-top="0"><span style="font-size: 11px"><a href="https://mjml.io" style="text-decoration: none; color: inherit;">[[PERMALINK_LABEL]]</a></span></mj-text>
+        </mj-column>
+      </mj-section>
+      <mj-section background-color="#ffffff" full-width="full-width">
+        <mj-column width="33.33333333333333%" vertical-align="middle">
+          <mj-image src="http://191n.mj.am/img/191n/1t/hx.png" alt="OnePage" padding-bottom="0px" padding-top="10px"></mj-image>
+        </mj-column>
+        <mj-column width="66.66666666666666%" vertical-align="middle">
+          <mj-text align="center" padding-bottom="0px" padding-top="10px"><a href="https://mjml.io" style="text-decoration: none; color: inherit;">Home</a>&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;<a href="https://mjml.io" style="text-decoration: none; color: inherit;">Features</a>&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;&#xA0;
+            <a href="https://mjml.io" style="text-decoration: none; color: inherit;">Portfolio</a>
           </mj-text>
         </mj-column>
       </mj-section>
-      <mj-section
-        padding="20px 20px 0 20px"
-        background-color="#FFFFFF"
-      >
-        <mj-column width="35%">
-          <mj-text
-            align="left"
-            font-size="20px"
-            font-weight="500"
-          >
-            // BR&amp;AND
-          </mj-text>
-        </mj-column>
-        <mj-column width="65%">
-          <mj-text
-            align="right"
-            font-size="11px"
-          >
-            <a
-              href="#"
-              style="color: #000000; text-decoration: none;"
-            >HOME</a>&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;<a
-              href="#"
-              style="color: #000000; text-decoration: none;"
-            >SERVICE</a>&nbsp;&nbsp;&nbsp;/&nbsp;&nbsp;&nbsp;<a
-              href="#"
-              style="color: #000000; text-decoration: none;"
-            >THIRD</a>
-          </mj-text>
-        </mj-column>
-      </mj-section>
-      <mj-section
-        padding="20px 20px 0 20px"
-        background-color="#FFFFFF"
-      >
-        <mj-column>
-          <mj-text
-            align="center"
-            font-weight="300"
-            padding="30px 40px 10px 40px"
-            font-size="32px"
-            line-height="40px"
-            color="#5FA91D"
-          >
-            Free Advertising For Your Online Business.
-          </mj-text>
-        </mj-column>
-      </mj-section>
-      <mj-section
-        padding="10px 20px"
-        background-color="#FFFFFF"
-      >
-        <mj-column>
-          <mj-divider
-            width="30px"
-            border-width="3px"
-            border-color="#9B9B9B"
-          />
-        </mj-column>
-      </mj-section>
-      <mj-section
-        padding="0 20px 20px 20px"
-        background-color="#FFFFFF"
-      >
-        <mj-column width="80%">
-          <mj-text
-            align="center"
-            padding-top="10px"
-            font-weight="500"
-            padding="0px"
-          >
-            A Right Media Mix Can Make The Difference.
-          </mj-text>
-        </mj-column>
-      </mj-section>
-      <mj-section
-        background-url="http://nimus.de/share/tpl-card/bg.jpg"
-        background-size="cover"
-        background-repeat="no-repeat"
-      >
+      <mj-section background-url="http://191n.mj.am/img/191n/1t/h0.jpg" background-size="cover" full-width="full-width" background-repeat="no-repeat">
         <mj-column width="100%">
-          <mj-image
-            src="http://nimus.de/share/tpl-card/lineshadow.png"
-            alt=""
-            align="center"
-            border="none"
-            padding="0px"
-          />
-          <mj-text
-            align="center"
-            padding="50px 40px 0 40px"
-            font-weight="300"
-          >
-            Marketers/advertisers usually focus their efforts on the people responsible for making the purchase. In many cases, this is an effective approach but in other cases it can make for a totally useless marketing campaign.
+          <mj-text align="center" font-size="14px" color="#45474e" padding-bottom="10px" padding-top="45px"><span style="font-size: 30px; line-height: 30px;">More than an email template</span><br /><br />Only on <span style="color: #e85034">Mailjet</span> template builder</mj-text>
+          <mj-button align="center" background-color="#e85034" color="#fff" border-radius="24px" href="https://mjml.io" font-family="Ubuntu, Helvetica, Arial, sans-serif, Helvetica, Arial, sans-serif" padding-bottom="45px" padding-top="10px">SUBSCRIBE</mj-button>
+        </mj-column>
+      </mj-section>
+      <mj-section background-color="#ffffff" full-width="full-width">
+        <mj-column vertical-align="top" width="33.33333333333333%">
+          <mj-image src="http://191n.mj.am/img/191n/1t/hs.png" alt="" width="50px"></mj-image>
+          <mj-text align="center" color="#9da3a3" font-size="11px" padding-bottom="30px"><span style="font-size: 14px; color: #e85034">Best audience</span><br /><br />Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque eleifend sagittis nunc, et fermentum est ullamcorper dignissim.</mj-text>
+        </mj-column>
+        <mj-column vertical-align="top" width="33.33333333333333%">
+          <mj-image src="http://191n.mj.am/img/191n/1t/hm.png" alt="" width="50px"></mj-image>
+          <mj-text align="center" color="#9da3a3" font-size="11px" padding-bottom="30px"><span style="font-size: 14px; color: #e85034">Higher rates</span><br /><br />Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque eleifend sagittis nunc, et fermentum est ullamcorper dignissim.</mj-text>
+        </mj-column>
+        <mj-column vertical-align="top" width="33.33333333333333%">
+          <mj-image src="http://191n.mj.am/img/191n/1t/hl.png" alt="" width="50px"></mj-image>
+          <mj-text align="center" color="#9da3a3" font-size="11px" padding-bottom="30px" padding-top="3px"><span style="font-size: 14px; color: #e85034">24/7 Support</span><br /><br />Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque eleifend sagittis nunc, et fermentum est ullamcorper dignissim.</mj-text>
+        </mj-column>
+      </mj-section>
+      <mj-section background-color="#e85034" full-width="full-width">
+        <mj-column width="100%" vertical-align="middle">
+          <mj-text align="center" color="#ffffff" font-size="18px" padding-bottom="10px">Why choose us?</mj-text>
+          <mj-divider border-color="#fff" border-style="solid" border-width="1px" padding-left="100px" padding-right="100px" padding-bottom="20px" padding-top="20px"></mj-divider>
+          <mj-text align="center" color="#f8d5d1" font-size="11px" padding-bottom="25px">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris. Lorem ipsum dolor sit amet, consectetur adipiscing
+            elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.</mj-text>
+        </mj-column>
+      </mj-section>
+      <mj-section background-color="#ffffff" full-width="full-width">
+        <mj-column width="50%" vertical-align="middle">
+          <mj-image src="http://191n.mj.am/img/191n/1t/h2.jpg" alt="" padding-bottom="20px" padding-top="20px"></mj-image>
+        </mj-column>
+        <mj-column width="50%" vertical-align="middle">
+          <mj-text align="left" color="#9da3a3" font-size="11px" padding-bottom="25px" padding-top="25px"><span style="font-weight: bold; font-size: 14px; color: #45474e">Great newsletter for the best company out there</span><br /><br />Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna
+            aliqua. Ut enim ad minim veniam.</mj-text>
+          <mj-button align="left" background-color="#e85034" color="#fff" border-radius="24px" font-size="11px" href="https://mjml.io" font-family="Ubuntu, Helvetica, Arial, sans-serif, Helvetica, Arial, sans-serif" padding-bottom="45px" padding-top="10px">READ MORE</mj-button>
+        </mj-column>
+      </mj-section>
+      <mj-section full-width="full-width">
+        <mj-column width="100%" vertical-align="middle">
+          <mj-text align="center" font-size="11px" padding-bottom="0px" padding-top="0px">
+            <p style="font-size: 11px">[[DELIVERY_INFO]]</p>
           </mj-text>
-          <mj-button
-            align="center"
-            background-color="#5FA91D"
-            color="#FFFFFF"
-            border-radius="2px"
-            href="#"
-            inner-padding="15px 30px"
-            padding-bottom="100px"
-            padding-top="20px"
-          >
-            CALL TO ACTION
-          </mj-button>
-        </mj-column>
-      </mj-section>
-      <mj-section
-        padding="50px 0 0 0"
-        background-color="#FFFFFF"
-      >
-        <mj-column>
-          <mj-image
-            src="http://nimus.de/share/tpl-card/bottom.png"
-            alt="bottom border"
-            align="center"
-            border="none"
-            padding="0px"
-            width=""
-          />
-        </mj-column>
-      </mj-section>
-      <mj-section padding="10px 0 20px 0">
-        <mj-column>
-          <mj-text
-            align="center"
-            color="#9B9B9B"
-            font-size="11px"
-          >
-            <a
-              href="#"
-              style="color: #9B9B9B;"
-            >Unsubscribe</a> from this newsletter<br>52 Edison Court Suite 259 / East Aidabury / Cambodi<br> <a
-              href="#"
-              style="color: #9B9B9B; text-decoration:none;"
-            >Made by svenhaustein.de</a>
+          <mj-text align="center" font-size="11px" padding-bottom="0px" padding-top="0px">
+            <p style="font-size: 11px">[[POSTAL_ADDRESS]]</p>
           </mj-text>
         </mj-column>
       </mj-section>
     </mj-body>
   </mjml>
 </template>
+<script setup lang="ts">
+</script>

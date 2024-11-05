@@ -51,7 +51,7 @@ function mjmlComponentAttributesToVuePropsDefinitions(mjmlComponentAttributes: M
 }
 
 function getVueRendered(h: h, mjmlDom: DOMNode[], defaultSlot: Slot, componentName: string, rootAttribs?: { [key: string]: string }): ReturnType<h>[] {
-  function mjmlDomTreeToVueRender(h: h, mjmlDom: DOMNode[], isRoot: boolean): ReturnType<h>[] {
+  function mjmlDomTreeToVueRender(mjmlDom: DOMNode[], isRoot: boolean): ReturnType<h>[] {
     return mjmlDom.filter(el => el.type !== 'text').map((el) => {
       if (el.type === 'tag') {
         if (isRoot) {
@@ -67,12 +67,12 @@ function getVueRendered(h: h, mjmlDom: DOMNode[], defaultSlot: Slot, componentNa
                 ...rootAttribs,
               }
           ,
-          mjmlDomTreeToVueRender(h, el.children, componentName, false),
+          mjmlDomTreeToVueRender(el.children, false),
         )
       }
 
       if (el.type === 'comment') {
-        if (el.data === '[SLOT CONTENT]') {
+        if (el.data === '[SLOT CONTENT]' && defaultSlot) {
           return defaultSlot()
         }
 
@@ -83,7 +83,7 @@ function getVueRendered(h: h, mjmlDom: DOMNode[], defaultSlot: Slot, componentNa
     })
   }
 
-  return mjmlDomTreeToVueRender(h, mjmlDom, true)
+  return mjmlDomTreeToVueRender(mjmlDom, true)
 }
 
 function toMediaQueryStyleTags(parsedWidth: string, unit: string, className: string, breakpoint: number, forceOWADesktop: boolean) {
