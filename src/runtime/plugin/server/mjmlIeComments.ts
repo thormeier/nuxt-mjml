@@ -1,3 +1,6 @@
+import { defineNitroPlugin } from 'nitropack/runtime'
+import { useRuntimeConfig } from '#imports'
+
 export default defineNitroPlugin((nitroApp) => {
   const config = useRuntimeConfig()
   const routeMatcher = config?.public?.mjml?.serverOnlyRouteMatcher
