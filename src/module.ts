@@ -1,4 +1,4 @@
-import { defineNuxtModule, createResolver, addComponent } from '@nuxt/kit'
+import { defineNuxtModule, createResolver, addComponent, addServerPlugin } from '@nuxt/kit'
 
 export interface ModuleOptions {
   serverOnlyRouteMatcher: RegExp
@@ -14,6 +14,8 @@ export default defineNuxtModule<ModuleOptions>({
     _nuxt.options.runtimeConfig.public['mjml'] = _options
 
     const resolver = createResolver(import.meta.url)
+
+    addServerPlugin(resolver.resolve('runtime/plugin/server/mjmlIeComments'))
 
     addComponent({
       name: 'mjml',
