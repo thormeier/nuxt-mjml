@@ -50,6 +50,16 @@ export default defineComponent({
       `,
     }))
 
+    const setFontStyleTags = validFonts.map(name => ({
+      type: 'text/css',
+      innerHTML: `
+        [style*="${name}"] { font-family: Helvetica, Arial, sans-serif, '${name}' !important; }
+        span { font-family: Helvetica, Arial, sans-serif, '${name}' !important; }
+        div { font-family: Helvetica, Arial, sans-serif, '${name}' !important; }
+        td { font-family: Helvetica, Arial, sans-serif, '${name}' !important; }
+      `,
+    }))
+
     useHead({
       link: fontLinks,
       bodyAttrs: {
@@ -62,6 +72,7 @@ export default defineComponent({
       },
       style: [
         ...fontStyleTags,
+        ...setFontStyleTags,
         {
           innerHTML: `
             #outlook a {
@@ -94,6 +105,19 @@ export default defineComponent({
             p {
               display: block;
               margin: 13px 0;
+            }
+            
+            .ExternalClass{
+              width:100%;
+            }
+            
+            .ExternalClass,
+            .ExternalClass p,
+            .ExternalClass span,
+            .ExternalClass font,
+            .ExternalClass td,
+            .ExternalClass div{
+              line-height: 100%;
             }
           `,
         },

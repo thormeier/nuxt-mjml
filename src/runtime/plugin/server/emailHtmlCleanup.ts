@@ -1,6 +1,35 @@
 import { defineNitroPlugin } from 'nitropack/runtime'
 import { useRuntimeConfig } from '#imports'
 
+function removeScriptTags(html) {
+  return html.replace(/<script\b[^>]*>([\s\S]*?)<\/script>/gi, '')
+}
+
+function convertToAbsoluteUrls(html, baseUrl) {
+  return html.replace(
+    /(\b(?:src|href)\s*=\s*['"])(\/[^'"]*)/gi,
+    (match, prefix, relativeUrl) => {
+      return `${prefix}${new URL(relativeUrl, baseUrl).href}`
+    },
+  )
+}
+
+function wrapFontsForOutlook(html) {
+  return html.replace(
+    /(<link[^>]*href=["']?([^"'>]*fonts\.googleapis\.com[^"'>]*)["'][^>]*>)/gi,
+    (match, linkTag) => `
+        <!--[if mso]>
+        <style>
+            * {
+                font-family: Helvetica, Arial, sans-serif !important;
+            }
+        </style>
+        <![endif]-->
+        <!--[if !mso]><!-->${linkTag}<!--<![endif]-->
+      `,
+  )
+}
+
 export default defineNitroPlugin((nitroApp) => {
   const config = useRuntimeConfig()
   const routeMatcher = config?.public?.mjml?.serverOnlyRouteMatcher
@@ -46,6 +75,9 @@ export default defineNitroPlugin((nitroApp) => {
         margin: 13px 0;
       }
     </style>
+    <!–[if mso]>
+      <style type="text/css"> body, table, td, tr, p, a, h1, h2, h3, {font-family: Helvetica, Arial, sans-serif !important;} </style>
+    <![endif]–>
     <!--[if mso]>
           <noscript>
           <xml>
@@ -62,6 +94,17 @@ export default defineNitroPlugin((nitroApp) => {
           </style>
           <![endif]-->
       `)
+
+      // Remove any nuxt logs etc.
+      html.bodyAppend = ['']
+
+      // Remove any extra script tags from the head.
+      html.head = html.head.map(removeScriptTags)
+
+      // Make all URLs absolute
+      const host = 'https://' + event.req.headers.host
+      html.head = html.head.map(h => convertToAbsoluteUrls(h, host)).map(wrapFontsForOutlook)
+      html.body = html.body.map(b => convertToAbsoluteUrls(b, host))
     }
   })
 })

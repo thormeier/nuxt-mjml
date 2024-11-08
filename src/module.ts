@@ -15,7 +15,7 @@ export default defineNuxtModule<ModuleOptions>({
 
     const resolver = createResolver(import.meta.url)
 
-    addServerPlugin(resolver.resolve('runtime/plugin/server/mjmlIeComments'))
+    addServerPlugin(resolver.resolve('runtime/plugin/server/emailHtmlCleanup'))
 
     addComponent({
       name: 'mjml',

@@ -1,4 +1,4 @@
-import type { ComponentObjectPropsOptions } from '@vue/runtime-core'
+import type { ComponentObjectPropsOptions, Ref } from '@vue/runtime-core'
 import { h, createCommentVNode, defineComponent } from '@vue/runtime-core'
 import type { DOMNode } from 'html-dom-parser'
 import parse from 'html-dom-parser'
@@ -11,7 +11,7 @@ function mjmlComponentAttributesToVuePropsDefinitions(mjmlComponentAttributes: M
   return Object.fromEntries(Object.entries(mjmlComponentAttributes).map(([k, attrType]) => [k, {
     type: String,
     required: false,
-    default: defaultAttributes[k],
+    default: k === 'text-align' ? 'left' : defaultAttributes[k],
     validator: (value: string | undefined) => {
       if (value === undefined) {
         return true
@@ -119,6 +119,71 @@ function toMediaQueryStyleTags(parsedWidth: string, unit: string, className: str
   return styleTags
 }
 
+function extractBorderColor(border) {
+  const colorRegex = /(#[0-9a-fA-F]{3,6}|rgba?\([\d\s,.%]+\))/
+  const match = border.match(colorRegex)
+
+  return match ? match[0] : null
+}
+
+function enhanceMjmlButton(dom: string, mjmlComponentInstance: Ref<MjmlComponent>, borderRadius: string, href: string) {
+  // Manually add some roundrect stuff for Outlook, because MJML doesn't do that.
+  const innerPaddings = mjmlComponentInstance.value.getShorthandAttrValue('inner-padding', 'top') + mjmlComponentInstance.value.getShorthandAttrValue('inner-padding', 'bottom')
+  const lineHeightAttribute = mjmlComponentInstance.value.getAttribute('line-height')
+
+  let lineHeight = Number.parseInt(lineHeightAttribute)
+  if (lineHeightAttribute.endsWith('%')) {
+    const percentageLineHeight = Number.parseInt(lineHeightAttribute.slice(0, -1)) / 100
+    const fontSize = Number.parseInt(mjmlComponentInstance.value.getAttribute('font-size'))
+
+    lineHeight = percentageLineHeight * fontSize
+  }
+
+  const border = mjmlComponentInstance.value.getAttribute('border')
+  let borderHeight = 0
+  if (border !== 'none') {
+    borderHeight = Number.parseInt(mjmlComponentInstance.value.getAttribute('border')?.split(' ')[0] || '0') * 2
+  }
+  const buttonHeight = Math.round(innerPaddings + lineHeight + borderHeight)
+
+  let buttonWidth = Number.parseInt(mjmlComponentInstance.value.calculateAWidth(mjmlComponentInstance.value.getAttribute('width'))) + borderHeight
+
+  if (!buttonWidth) {
+    buttonWidth = '200'
+  }
+  buttonWidth += 'px'
+
+  let arcSize = Math.round(Number.parseInt(borderRadius) / buttonHeight * 100)
+  if (arcSize > 50) {
+    arcSize = 50
+  }
+
+  const borderColor = extractBorderColor(mjmlComponentInstance.value.getAttribute('border'))
+
+  dom = dom.replace('<table', `
+    <!--[if mso | IE]>
+      <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${href}" style="height:${buttonHeight}px;v-text-anchor:middle;width:${buttonWidth};" arcsize="${arcSize}%" strokecolor="${borderColor}" fill="t">6
+        <v:fill type="tile" color="${mjmlComponentInstance.value.getAttribute('background-color')}" />
+        <w:anchorlock/>
+        <center style="color:${mjmlComponentInstance.value.getAttribute('color')};font-family:${mjmlComponentInstance.value.getAttribute('font-family')};font-size:${mjmlComponentInstance.value.getAttribute('font-size')};font-weight:${mjmlComponentInstance.value.getAttribute('font-weight')};">
+    <![endif]-->
+    <!--[if !mso]><!--><table
+  `)
+
+  dom = dom.replace('</table>', `
+    </table>
+    <!--<![endif]-->
+    <!--[if mso | IE]>
+        </center>
+      </v:roundrect>
+    <![endif]-->
+  `)
+
+  dom = dom.replace('<!--[SLOT CONTENT]-->', '<!--<![endif]--><!--[SLOT CONTENT]--><!--[if !mso]><!-->')
+
+  return dom
+}
+
 export default function setupMjmlComponent(mjmlComponent: MjmlComponent, hasColumns?: boolean) {
   const vueComponentProps = mjmlComponentAttributesToVuePropsDefinitions(
     mjmlComponent.allowedAttributes ? mjmlComponent.allowedAttributes : {},
@@ -223,7 +288,11 @@ export default function setupMjmlComponent(mjmlComponent: MjmlComponent, hasColu
       }
 
       const mjmlDom = computed(() => {
-        const rendered = parentChildRenderer && parentChildRenderer.value ? parentChildRenderer.value(mjmlComponentInstance.value) : mjmlComponentInstance.value.render()
+        let rendered = parentChildRenderer && parentChildRenderer.value ? parentChildRenderer.value(mjmlComponentInstance.value) : mjmlComponentInstance.value.render()
+
+        if (mjmlComponent.componentName === 'mj-button' && props.borderRadius !== '0') {
+          rendered = enhanceMjmlButton(rendered, mjmlComponentInstance, props.borderRadius, props.href)
+        }
 
         return parse(rendered, 'text/html')
       })
