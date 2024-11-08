@@ -8,6 +8,6 @@ export default defineNuxtConfig({
   },
   compatibilityDate: '2024-10-23',
   mjml: {
-    serverOnlyRouteMatcher: /^\/server-only\/.*/,
+    serverOnlyRouteMatcher: '^/server-only/.*',
   },
 })

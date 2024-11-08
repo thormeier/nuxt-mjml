@@ -50,6 +50,7 @@ export default defineComponent({
       `,
     }))
 
+    // TODO: Find a better way to handle multiple fonts.
     const setFontStyleTags = validFonts.map(name => ({
       type: 'text/css',
       innerHTML: `

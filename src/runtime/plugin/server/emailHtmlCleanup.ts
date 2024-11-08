@@ -34,8 +34,15 @@ export default defineNitroPlugin((nitroApp) => {
   const config = useRuntimeConfig()
   const routeMatcher = config?.public?.mjml?.serverOnlyRouteMatcher
 
+  // No need to register the hook if the route matcher isn't specified.
+  if (!routeMatcher) {
+    return
+  }
+
   nitroApp.hooks.hook('render:html', (html, { event }) => {
-    if (routeMatcher && event._path.match(routeMatcher)) {
+    const routeMatcherRegexp = new RegExp(routeMatcher)
+
+    if (event._path.match(routeMatcherRegexp)) {
       html.head.unshift(`
     <!--[if !mso]><!-->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
