@@ -1,7 +1,7 @@
 import { defineNuxtModule, createResolver, addComponent, addServerPlugin } from '@nuxt/kit'
 
 export interface ModuleOptions {
-  serverOnlyRouteMatcher: RegExp
+  serverOnlyRouteMatcher: string
 }
 
 export default defineNuxtModule<ModuleOptions>({
