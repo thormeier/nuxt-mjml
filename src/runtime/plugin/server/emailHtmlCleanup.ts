@@ -8,7 +8,7 @@ function removeScriptTags(html) {
 function convertToAbsoluteUrls(html, baseUrl) {
   return html.replace(
     /(\b(?:src|href)\s*=\s*['"])(\/[^'"]*)/gi,
-    (match, prefix, relativeUrl) => {
+    (_, prefix, relativeUrl) => {
       return `${prefix}${new URL(relativeUrl, baseUrl).href}`
     },
   )
@@ -17,7 +17,7 @@ function convertToAbsoluteUrls(html, baseUrl) {
 function wrapFontsForOutlook(html) {
   return html.replace(
     /(<link[^>]*href=["']?([^"'>]*fonts\.googleapis\.com[^"'>]*)["'][^>]*>)/gi,
-    (match, linkTag) => `
+    (_, linkTag) => `
         <!--[if mso]>
         <style>
             * {

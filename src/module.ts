@@ -129,5 +129,44 @@ export default defineNuxtModule<ModuleOptions>({
       name: 'mj-wrapper',
       filePath: resolver.resolve('runtime/components/MjWrapper'),
     })
+
+    if (!_nuxt.options.vite.optimizeDeps.include) {
+      _nuxt.options.vite.optimizeDeps.include = []
+    }
+
+    _nuxt.options.vite.optimizeDeps.include.push(
+      'html-dom-parser',
+      'mjml-accordion-snyk',
+      'mjml-body-snyk',
+      'mjml-button-snyk',
+      'mjml-carousel-snyk',
+      'mjml-column-snyk',
+      'mjml-core-snyk',
+      'mjml-divider-snyk',
+      'mjml-group-snyk',
+      'mjml-head-attributes-snyk',
+      'mjml-head-breakpoint-snyk',
+      'mjml-head-font-snyk',
+      'mjml-head-html-attributes-snyk',
+      'mjml-head-preview-snyk',
+      'mjml-head-snyk',
+      'mjml-head-style-snyk',
+      'mjml-head-title-snyk',
+      'mjml-hero-snyk',
+      'mjml-image-snyk',
+      'mjml-migrate-snyk',
+      'mjml-navbar-snyk',
+      'mjml-parser-xml-snyk',
+      'mjml-preset-core-snyk',
+      'mjml-raw-snyk',
+      'mjml-section-snyk',
+      'mjml-snyk',
+      'mjml-social-snyk',
+      'mjml-spacer-snyk',
+      'mjml-table-snyk',
+      'mjml-text-snyk',
+      'mjml-validator-snyk',
+      'mjml-wrapper-snyk',
+    )
   },
 })
