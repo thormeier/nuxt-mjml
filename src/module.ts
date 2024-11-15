@@ -130,6 +130,14 @@ export default defineNuxtModule<ModuleOptions>({
       filePath: resolver.resolve('runtime/components/MjWrapper'),
     })
 
+    if (!_nuxt.options.vite) {
+      _nuxt.options.vite = {}
+    }
+
+    if (!_nuxt.options.vite.optimizeDeps) {
+      _nuxt.options.vite.optimizeDeps = {}
+    }
+
     if (!_nuxt.options.vite.optimizeDeps.include) {
       _nuxt.options.vite.optimizeDeps.include = []
     }
