@@ -1,6 +1,6 @@
 {
   "name": "nuxt-mjml",
-  "version": "1.0.16",
+  "version": "1.0.17",
   "description": "Nuxt implementation of MJML as Vue components. Including all bells and whistles.",
   "repository": "https://github.com/thormeier/nuxt-mjml",
   "license": "MIT",
