@@ -109,8 +109,8 @@ export default defineNitroPlugin((nitroApp) => {
       // Remove any extra script tags from the head.
       html.head = html.head.map(removeScriptTags)
 
-      // Make all URLs absolute
-      const host = 'https://' + getRequestHost(event, { xForwardedHost: true })
+      // Make all URLs absolute. Split by commas in case stuff like Fastly sends whacky stuff.
+      const host = 'https://' + getRequestHost(event, { xForwardedHost: true }).split(',')[0]
 
       html.head = html.head.map(h => convertToAbsoluteUrls(h, host)).map(wrapFontsForOutlook)
       html.body = html.body.map(b => convertToAbsoluteUrls(b, host))
