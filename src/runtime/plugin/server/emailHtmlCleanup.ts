@@ -1,4 +1,5 @@
 import { defineNitroPlugin } from 'nitropack/runtime'
+import { getRequestHost } from 'h3'
 import { useRuntimeConfig } from '#imports'
 
 function removeScriptTags(html) {
@@ -53,21 +54,21 @@ export default defineNitroPlugin((nitroApp) => {
       #outlook a {
         padding: 0;
       }
-  
+
       body {
         margin: 0;
         padding: 0;
         -webkit-text-size-adjust: 100%;
         -ms-text-size-adjust: 100%;
       }
-  
+
       table,
       td {
         border-collapse: collapse;
         mso-table-lspace: 0pt;
         mso-table-rspace: 0pt;
       }
-  
+
       img {
         border: 0;
         height: auto;
@@ -76,7 +77,7 @@ export default defineNitroPlugin((nitroApp) => {
         text-decoration: none;
         -ms-interpolation-mode: bicubic;
       }
-  
+
       p {
         display: block;
         margin: 13px 0;
@@ -109,7 +110,8 @@ export default defineNitroPlugin((nitroApp) => {
       html.head = html.head.map(removeScriptTags)
 
       // Make all URLs absolute
-      const host = 'https://' + event.req.headers.host
+      const host = 'https://' + getRequestHost(event, { xForwardedHost: true })
+
       html.head = html.head.map(h => convertToAbsoluteUrls(h, host)).map(wrapFontsForOutlook)
       html.body = html.body.map(b => convertToAbsoluteUrls(b, host))
     }
