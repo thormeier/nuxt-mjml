@@ -1,6 +1,18 @@
 # Changelog
 
 
+## v1.0.16
+
+[compare changes](https://github.com/thormeier/nuxt-mjml/compare/v1.0.15...v1.0.16)
+
+### 🏡 Chore
+
+- **release:** V1.0.15 ([03920b2](https://github.com/thormeier/nuxt-mjml/commit/03920b2))
+
+### ❤️ Contributors
+
+- Pascal Thormeier <pascal.thormeier@liip.ch>
+
 ## v1.0.15
 
 [compare changes](https://github.com/thormeier/nuxt-mjml/compare/v1.0.14...v1.0.15)
