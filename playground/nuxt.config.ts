@@ -1,12 +1,16 @@
 export default defineNuxtConfig({
-  modules: ['../src/module'],
+  modules: ['nuxt-mjml'],
   devtools: { enabled: true },
   routeRules: {
     '/server-only/**': {
       experimentalNoScripts: true,
     },
   },
-  compatibilityDate: '2024-10-23',
+  compatibilityDate: '2024-11-01',
+  typescript: {
+    strict: true,
+    typeCheck: true,
+  },
   mjml: {
     serverOnlyRouteMatcher: '^/server-only/.*',
   },

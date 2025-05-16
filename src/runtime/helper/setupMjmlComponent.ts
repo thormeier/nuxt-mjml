@@ -1,58 +1,86 @@
+import type { Ref } from '@vue/runtime-core'
 import { h, defineComponent } from '@vue/runtime-core'
 import parse from 'html-dom-parser'
 import { provide, inject, ref, computed, watch } from 'vue'
-import { useHead } from '@unhead/vue'
-import type { MjmlUnderstandableVueChild, MjmlComponent, MjmlChildRenderFunction } from '../types'
+import type {
+  BodyComponent,
+  BodyComponentConstructor,
+  Context,
+  MjmlAttributes,
+  MjmlChildRenderFunction,
+} from 'mjml-core-snyk'
+import type { MjColumnConstructor } from 'mjml-column-snyk'
+import MjColumn from 'mjml-column-snyk'
+import type { MjButtonConstructor } from 'mjml-button-snyk'
+import MjButton from 'mjml-button-snyk'
+import type { MjGroupConstructor } from 'mjml-group-snyk'
+import MjGroup from 'mjml-group-snyk'
+import type { MjBodyConstructor } from 'mjml-body-snyk'
+import MjBody from 'mjml-body-snyk'
 import camelToKebab from './camelToKebabCase'
 import { mjmlComponentAttributesToVuePropsDefinitions } from './mjmlComponentAttributesToVuePropsDefinitions'
 import { getVueRendered } from './getVueRendered'
 import { toMediaQueryStyleTags } from './toMediaQueryStyleTags'
 import { enhanceMjmlButton } from './enhanceMjmlButton'
+import { isComponent } from './isComponent'
+import { useHead } from '#imports'
 
-export default function setupMjmlComponent(mjmlComponent: MjmlComponent, hasColumns?: boolean) {
-  const vueComponentProps = mjmlComponentAttributesToVuePropsDefinitions(
-    mjmlComponent.allowedAttributes ? mjmlComponent.allowedAttributes : {},
-    mjmlComponent.defaultAttributes ? mjmlComponent.defaultAttributes : {},
+export default function setupMjmlComponent<
+  C extends BodyComponentConstructor,
+  A extends MjmlAttributes = MjmlAttributes,
+>(mjmlComponent: C, hasColumns?: boolean): ReturnType<typeof defineComponent<A>> {
+  const params = mjmlComponentAttributesToVuePropsDefinitions<A>(
+    (mjmlComponent.allowedAttributes ? mjmlComponent.allowedAttributes : {}) as A,
+    (mjmlComponent.defaultAttributes ? mjmlComponent.defaultAttributes : {}) as A,
   )
 
-  vueComponentProps['data-v-inspector'] = {
-    type: String,
-    required: false,
-    default: () => undefined,
-  }
-
-  if (hasColumns) {
-    vueComponentProps.numberOfColumns = {
-      type: Number,
-      required: false,
-      default: () => 1,
-      validator: (value: number) => {
-        return value > 0
-      },
-    }
-  }
-
-  if (mjmlComponent.componentName === 'mj-column') {
-    vueComponentProps.mobileWidth = {
+  const additionalParams = {
+    'data-v-inspector': {
       type: String,
       required: false,
       default: () => undefined,
-    }
+    },
   }
 
-  return defineComponent({
+  const vueComponentProps = isComponent<MjColumnConstructor>(mjmlComponent, MjColumn)
+    ? {
+        ...params,
+        ...additionalParams,
+        numberOfColumns: {
+          type: Number,
+          required: false,
+          default: () => 1,
+          validator: (value: number) => {
+            return value > 0
+          },
+        },
+        mobileWidth: {
+          type: String,
+          required: false,
+          default: () => undefined,
+        },
+      }
+    : {
+        ...params,
+        ...additionalParams,
+      }
+
+  return defineComponent<A>({
     name: mjmlComponent.componentName,
     props: vueComponentProps,
     setup(props, { slots }) {
       // Injected because
       // a) we can't exactly use props
       // b) to allow for deeply nested mjml components in vanilla-Vue components
-      const parentChildRenderer = inject('mjmlChildRenderFunction', null)
-      const numberOfSiblings = inject('numberOfSiblings', 1)
-      const mjmlContext = inject('mjmlContext', {})
+      const parentChildRenderer = inject<Ref<(component: BodyComponent<object>) => string> | null>('mjmlChildRenderFunction', null)
+      const numberOfSiblings = inject<number>('numberOfSiblings', 1)
+      const mjmlContext = inject<Context>('mjmlContext', {
+        globalData: {},
+        processing: () => '',
+      })
       const forceOWADesktop = inject('forceOWADesktop', false)
 
-      const childInstances = ref<MjmlUnderstandableVueChild[]>([])
+      const childInstances = ref<BodyComponent<object>[]>([])
       const childRenderFunction = ref<MjmlChildRenderFunction | null>(null)
       const currentChildIndex = ref<number | undefined>(undefined)
 
@@ -61,12 +89,18 @@ export default function setupMjmlComponent(mjmlComponent: MjmlComponent, hasColu
           // MJML itself sets this up with the same number in core already, so here we are.
           index: currentChildIndex.value,
           first: currentChildIndex.value === 0,
-          last: currentChildIndex.value - 1 < numberOfSiblings,
+          last: (currentChildIndex.value || 0) - 1 < numberOfSiblings,
           sibling: numberOfSiblings,
           nonRawSiblings: numberOfSiblings,
         }
 
-        const args = {
+        const args: {
+          context: Context
+          children: BodyComponent<object>[]
+          attributes: object
+          props: typeof mjmlProps
+          content: string | undefined
+        } = {
           context: mjmlContext,
           children: childInstances.value,
           attributes: Object.fromEntries(
@@ -78,17 +112,18 @@ export default function setupMjmlComponent(mjmlComponent: MjmlComponent, hasColu
               ]),
           ),
           props: mjmlProps,
+          content: undefined,
         }
 
         if (mjmlComponent.endingTag) {
           // This comment node indicates the rendering part that a slotted element should go here.
-          args.content = '<!--[SLOT CONTENT]-->'
+          args.content = '{{[SLOT CONTENT]}}'
         }
 
         return args
       })
 
-      const mjmlComponentInstance = ref<MjmlComponent>(new mjmlComponent(mjmlComponentArgs.value))
+      const mjmlComponentInstance = ref(new mjmlComponent(mjmlComponentArgs.value))
 
       watch(mjmlComponentArgs, (newValue) => {
         mjmlComponentInstance.value = new mjmlComponent(newValue)
@@ -96,34 +131,35 @@ export default function setupMjmlComponent(mjmlComponent: MjmlComponent, hasColu
 
       watch(mjmlComponentInstance, (newValue) => {
         if (!mjmlComponent.endingTag) {
-          newValue.renderChildren = (_: MjmlUnderstandableVueChild[], options: { renderer: MjmlChildRenderFunction }) => {
+          newValue.renderChildren = (_: BodyComponent<object>[], options: { renderer: MjmlChildRenderFunction }) => {
             childRenderFunction.value = options.renderer
 
-            return '<!--[SLOT CONTENT]-->'
+            return '{{[SLOT CONTENT]}}'
           }
         }
       })
 
       if (!mjmlComponent.endingTag) {
-        mjmlComponentInstance.value.renderChildren = (_: MjmlUnderstandableVueChild[], options: { renderer: MjmlChildRenderFunction }) => {
-          childRenderFunction.value = options ? options.renderer : component => component.render()
+        mjmlComponentInstance.value.renderChildren = (_: BodyComponent<object>[], options: { renderer: MjmlChildRenderFunction }) => {
+          childRenderFunction.value = options && options.renderer ? options.renderer : (component: BodyComponent<object>) => component.render()
 
-          return '<!--[SLOT CONTENT]-->'
+          return '{{[SLOT CONTENT]}}'
         }
       }
 
       const mjmlDom = computed(() => {
         let rendered = parentChildRenderer && parentChildRenderer.value ? parentChildRenderer.value(mjmlComponentInstance.value) : mjmlComponentInstance.value.render()
 
-        if (mjmlComponent.componentName === 'mj-button' && props.borderRadius !== '0') {
-          rendered = enhanceMjmlButton(rendered, mjmlComponentInstance, props.borderRadius, props.href)
+        if (isComponent<MjButtonConstructor>(mjmlComponent, MjButton) && 'borderRadius' in props && props.borderRadius !== '0') {
+          rendered = enhanceMjmlButton(rendered, mjmlComponentInstance, props.borderRadius as string | null, 'href' in props ? (props.href as string) : '')
         }
 
-        return parse(rendered, 'text/html')
+        return parse(rendered)
       })
 
       const mjmlMediaQueryHeadStyles = computed(() => {
-        if (mjmlComponent.componentName !== 'mj-column' && mjmlComponent.componentName !== 'mj-group') {
+        if (
+          !isComponent<MjGroupConstructor>(mjmlComponent, MjGroup) && !isComponent<MjColumnConstructor>(mjmlComponent, MjColumn)) {
           return []
         }
 
@@ -136,7 +172,7 @@ export default function setupMjmlComponent(mjmlComponent: MjmlComponent, hasColu
       })
 
       const bodyBackgroundColor = computed(() => {
-        if (mjmlComponent.componentName !== 'mj-body') {
+        if (isComponent<MjBodyConstructor>(mjmlComponent, MjBody)) {
           return null
         }
 
@@ -144,15 +180,15 @@ export default function setupMjmlComponent(mjmlComponent: MjmlComponent, hasColu
       })
 
       const headSettings = computed(() => {
-        const headSettings: { style?: [], bodyAttrs?: { style: string } } = {}
+        const headSettings: { style?: object[], bodyAttrs?: { style: string } } = {}
 
-        if (mjmlComponent.componentName === 'mj-body' && bodyBackgroundColor.value) {
+        if (isComponent<MjBodyConstructor>(mjmlComponent, MjBody) && bodyBackgroundColor.value) {
           headSettings.bodyAttrs = {
             style: `word-spacing:normal;background-color:${bodyBackgroundColor.value};`,
           }
         }
 
-        if (mjmlComponent.componentName === 'mj-column' || mjmlComponent.componentName === 'mj-group') {
+        if (isComponent<MjGroupConstructor>(mjmlComponent, MjGroup) || isComponent<MjColumnConstructor>(mjmlComponent, MjColumn)) {
           headSettings.style = mjmlMediaQueryHeadStyles.value
         }
 
@@ -162,14 +198,14 @@ export default function setupMjmlComponent(mjmlComponent: MjmlComponent, hasColu
       useHead(headSettings.value)
 
       const numberOfColumns = computed(() => {
-        return hasColumns ? props.numberOfColumns : 1
+        return hasColumns && 'numberOfColumns' in props ? props.numberOfColumns as number : 1
       })
 
       provide('mjmlChildRenderFunction', childRenderFunction)
       provide('numberOfSiblings', numberOfColumns)
 
       return () => getVueRendered(h, mjmlDom.value, slots.default, mjmlComponent.componentName, {
-        'data-v-inspector': props['data-v-inspector'],
+        'data-v-inspector': ('data-v-inspector' in props ? props['data-v-inspector'] : '') as string,
       })
     },
   })

@@ -1,12 +1,13 @@
 // TODO: Find a way to move that to `MjButton.ts` - perhaps with a plugin-like system.
 import type { Ref } from '@vue/runtime-core'
+import type MjButton from 'mjml-button-snyk'
 import { extractBorderColor } from './extractBorderColor'
-import type { MjmlComponent } from '~/types'
 
-export function enhanceMjmlButton(dom: string, mjmlComponentInstance: Ref<MjmlComponent>, borderRadius: string, href: string) {
-  // Manually add some roundrect stuff for Outlook, because MJML doesn't do that.
-  const innerPaddings = mjmlComponentInstance.value.getShorthandAttrValue('inner-padding', 'top') + mjmlComponentInstance.value.getShorthandAttrValue('inner-padding', 'bottom')
+export function enhanceMjmlButton(dom: string, mjmlComponentInstance: Ref<MjButton>, borderRadius: number | string | null, href: number | string | null) {
+  // Manually add some v:roundrect stuff for Outlook, because MJML doesn't do that.
+  const innerPaddings = Number.parseInt(mjmlComponentInstance.value.getShorthandAttrValue('inner-padding', 'top') + mjmlComponentInstance.value.getShorthandAttrValue('inner-padding', 'bottom'))
   const lineHeightAttribute = mjmlComponentInstance.value.getAttribute('line-height')
+  const usedBorderRadius = borderRadius ? borderRadius.toString() : '0'
 
   let lineHeight = Number.parseInt(lineHeightAttribute)
   if (lineHeightAttribute.endsWith('%')) {
@@ -23,14 +24,7 @@ export function enhanceMjmlButton(dom: string, mjmlComponentInstance: Ref<MjmlCo
   }
   const buttonHeight = Math.round(innerPaddings + lineHeight + borderHeight)
 
-  let buttonWidth = Number.parseInt(mjmlComponentInstance.value.calculateAWidth(mjmlComponentInstance.value.getAttribute('width'))) + borderHeight
-
-  if (!buttonWidth) {
-    buttonWidth = '200'
-  }
-  buttonWidth += 'px'
-
-  let arcSize = Math.round(Number.parseInt(borderRadius) / buttonHeight * 100)
+  let arcSize = Math.round(Number.parseInt(usedBorderRadius) / buttonHeight * 100)
   if (arcSize > 50) {
     arcSize = 50
   }
@@ -39,24 +33,29 @@ export function enhanceMjmlButton(dom: string, mjmlComponentInstance: Ref<MjmlCo
 
   dom = dom.replace('<table', `
     <!--[if mso | IE]>
-      <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${href}" style="height:${buttonHeight}px;v-text-anchor:middle;width:${buttonWidth};" arcsize="${arcSize}%" strokecolor="${borderColor}" fill="t">6
+      <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${href ? href : '#'}" style="height:${buttonHeight}px;v-text-anchor:middle;mso-wrap-style:none;mso-fit-shape-to-text:true;" arcsize="${arcSize}%" strokecolor="${borderColor}" fill="t">
         <v:fill type="tile" color="${mjmlComponentInstance.value.getAttribute('background-color')}" />
         <w:anchorlock/>
         <center style="color:${mjmlComponentInstance.value.getAttribute('color')};font-family:${mjmlComponentInstance.value.getAttribute('font-family')};font-size:${mjmlComponentInstance.value.getAttribute('font-size')};font-weight:${mjmlComponentInstance.value.getAttribute('font-weight')};">
+            {{[SLOT CONTENT]}}
+        </center>
+        </v:roundrect>
     <![endif]-->
     <!--[if !mso]><!--><table
   `)
 
-  dom = dom.replace('</table>', `
-    </table>
-    <!--<![endif]-->
-    <!--[if mso | IE]>
-        </center>
-      </v:roundrect>
-    <![endif]-->
-  `)
+  // Visually center text in the button.
+  dom = dom.replace(/(<a\s+href="[^"]*"\s+style=")([^"]*)"/gi, (_, prefix, style) => {
+    // The additional background colour of the anchor tag makes the button appear visually larger, since we're shifting it down via position: relative later on.
+    const cleanedStyle = style
+      .replace(/background-color\s*:[^;"]*;?/gi, '')
+      .replace(/background\s*:[^;"]*;?/gi, '')
+      .trim()
 
-  dom = dom.replace('<!--[SLOT CONTENT]-->', '<!--<![endif]--><!--[SLOT CONTENT]--><!--[if !mso]><!-->')
+    const newStyle = `${cleanedStyle}${cleanedStyle.endsWith(';') || cleanedStyle === '' ? '' : ';'}position:relative;top:2px;`
+
+    return `${prefix}${newStyle}"`
+  })
 
   return dom
 }

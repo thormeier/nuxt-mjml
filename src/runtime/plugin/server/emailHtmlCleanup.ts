@@ -2,11 +2,11 @@ import { defineNitroPlugin } from 'nitropack/runtime'
 import { getRequestHost } from 'h3'
 import { useRuntimeConfig } from '#imports'
 
-function removeScriptTags(html) {
+function removeScriptTags(html: string) {
   return html.replace(/<script\b[^>]*>([\s\S]*?)<\/script>/gi, '')
 }
 
-function convertToAbsoluteUrls(html, baseUrl) {
+function convertToAbsoluteUrls(html: string, baseUrl: string) {
   return html.replace(
     /(\b(?:src|href)\s*=\s*['"])(\/[^'"]*)/gi,
     (_, prefix, relativeUrl) => {
@@ -15,7 +15,7 @@ function convertToAbsoluteUrls(html, baseUrl) {
   )
 }
 
-function wrapFontsForOutlook(html) {
+function wrapFontsForOutlook(html: string) {
   return html.replace(
     /(<link[^>]*href=["']?([^"'>]*fonts\.googleapis\.com[^"'>]*)["'][^>]*>)/gi,
     (_, linkTag) => `
@@ -31,6 +31,10 @@ function wrapFontsForOutlook(html) {
   )
 }
 
+function removeVueHtmlComments(input: string): string {
+  return input.replace(/<!--\]-->|<!--\[-->/g, '')
+}
+
 export default defineNitroPlugin((nitroApp) => {
   const config = useRuntimeConfig()
   const routeMatcher = config?.public?.mjml?.serverOnlyRouteMatcher
@@ -40,11 +44,14 @@ export default defineNitroPlugin((nitroApp) => {
     return
   }
 
-  nitroApp.hooks.hook('render:html', (html, { event }) => {
+  nitroApp.hooks.hook('render:response', (response, { event }) => {
     const routeMatcherRegexp = new RegExp(routeMatcher)
 
-    if (event._path.match(routeMatcherRegexp)) {
-      html.head.unshift(`
+    if (!event || !event._path || !event._path.match(routeMatcherRegexp)) {
+      return
+    }
+
+    response.body = response.body.replace('<head>', `<head>
     <!--[if !mso]><!-->
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <!--<![endif]-->
@@ -103,17 +110,9 @@ export default defineNitroPlugin((nitroApp) => {
           <![endif]-->
       `)
 
-      // Remove any nuxt logs etc.
-      html.bodyAppend = ['']
+    // Make all URLs absolute. Split by commas in case stuff like Fastly sends whacky stuff.
+    const host = 'https://' + getRequestHost(event, { xForwardedHost: true }).split(',')[0]
 
-      // Remove any extra script tags from the head.
-      html.head = html.head.map(removeScriptTags)
-
-      // Make all URLs absolute. Split by commas in case stuff like Fastly sends whacky stuff.
-      const host = 'https://' + getRequestHost(event, { xForwardedHost: true }).split(',')[0]
-
-      html.head = html.head.map(h => convertToAbsoluteUrls(h, host)).map(wrapFontsForOutlook)
-      html.body = html.body.map(b => convertToAbsoluteUrls(b, host))
-    }
+    response.body = removeVueHtmlComments(removeScriptTags(wrapFontsForOutlook(convertToAbsoluteUrls(response.body, host))))
   })
 })

@@ -1,4 +1,4 @@
-import { defineNuxtModule, createResolver, addComponent, addServerPlugin } from '@nuxt/kit'
+import { defineNuxtModule, createResolver, addComponent, addServerPlugin, addTypeTemplate } from '@nuxt/kit'
 
 export interface ModuleOptions {
   serverOnlyRouteMatcher: string
@@ -128,6 +128,79 @@ export default defineNuxtModule<ModuleOptions>({
     addComponent({
       name: 'mj-wrapper',
       filePath: resolver.resolve('runtime/components/MjWrapper'),
+    })
+
+    addTypeTemplate({
+      filename: 'mjml-accordion-snyk.d.ts',
+      src: resolver.resolve('runtime/types/mjml-accordion-snyk.d.ts'),
+    })
+    addTypeTemplate({
+      filename: 'mjml-body-snyk.d.ts',
+      src: resolver.resolve('runtime/types/mjml-body-snyk.d.ts'),
+    })
+    addTypeTemplate({
+      filename: 'mjml-button-snyk.d.ts',
+      src: resolver.resolve('runtime/types/mjml-button-snyk.d.ts'),
+    })
+    addTypeTemplate({
+      filename: 'mjml-carousel-snyk.d.ts',
+      src: resolver.resolve('runtime/types/mjml-carousel-snyk.d.ts'),
+    })
+    addTypeTemplate({
+      filename: 'mjml-column-snyk.d.ts',
+      src: resolver.resolve('runtime/types/mjml-column-snyk.d.ts'),
+    })
+    addTypeTemplate({
+      filename: 'mjml-core-snyk.d.ts',
+      src: resolver.resolve('runtime/types/mjml-core-snyk.d.ts'),
+    })
+    addTypeTemplate({
+      filename: 'mjml-divider-snyk.d.ts',
+      src: resolver.resolve('runtime/types/mjml-divider-snyk.d.ts'),
+    })
+    addTypeTemplate({
+      filename: 'mjml-group-snyk.d.ts',
+      src: resolver.resolve('runtime/types/mjml-group-snyk.d.ts'),
+    })
+    addTypeTemplate({
+      filename: 'mjml-hero-snyk.d.ts',
+      src: resolver.resolve('runtime/types/mjml-hero-snyk.d.ts'),
+    })
+    addTypeTemplate({
+      filename: 'mjml-image-snyk.d.ts',
+      src: resolver.resolve('runtime/types/mjml-image-snyk.d.ts'),
+    })
+    addTypeTemplate({
+      filename: 'mjml-navbar-snyk.d.ts',
+      src: resolver.resolve('runtime/types/mjml-navbar-snyk.d.ts'),
+    })
+    addTypeTemplate({
+      filename: 'mjml-raw-snyk.d.ts',
+      src: resolver.resolve('runtime/types/mjml-raw-snyk.d.ts'),
+    })
+    addTypeTemplate({
+      filename: 'mjml-section-snyk.d.ts',
+      src: resolver.resolve('runtime/types/mjml-section-snyk.d.ts'),
+    })
+    addTypeTemplate({
+      filename: 'mjml-social-snyk.d.ts',
+      src: resolver.resolve('runtime/types/mjml-social-snyk.d.ts'),
+    })
+    addTypeTemplate({
+      filename: 'mjml-spacer-snyk.d.ts',
+      src: resolver.resolve('runtime/types/mjml-spacer-snyk.d.ts'),
+    })
+    addTypeTemplate({
+      filename: 'mjml-table-snyk.d.ts',
+      src: resolver.resolve('runtime/types/mjml-table-snyk.d.ts'),
+    })
+    addTypeTemplate({
+      filename: 'mjml-text-snyk.d.ts',
+      src: resolver.resolve('runtime/types/mjml-text-snyk.d.ts'),
+    })
+    addTypeTemplate({
+      filename: 'mjml-wrapper-snyk.d.ts',
+      src: resolver.resolve('runtime/types/mjml-wrapper-snyk.d.ts'),
     })
 
     if (!_nuxt.options.vite) {

@@ -4,5 +4,12 @@
     "dist",
     "node_modules",
     "playground",
-  ]
+  ],
+  "compilerOptions": {
+    "strict": true,
+    "baseUrl": ".",
+    "typeRoots": ["./types", "./src/runtime/types", "./node_modules/@types"],
+    "types": []
+  },
+  "include": ["src", "types"]
 }

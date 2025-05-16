@@ -15,7 +15,7 @@ export default defineComponent({
   },
   setup(props) {
     useHead({
-      style: [
+      link: [
         {
           rel: 'stylesheet',
           type: 'text/css',

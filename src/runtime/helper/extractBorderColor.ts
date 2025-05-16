@@ -1,4 +1,4 @@
-export function extractBorderColor(border) {
+export function extractBorderColor(border: string) {
   const colorRegex = /(#[0-9a-fA-F]{3,6}|rgba?\([\d\s,.%]+\))/
   const match = border.match(colorRegex)
 

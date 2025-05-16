@@ -1,4 +1,4 @@
-export function toMediaQueryStyleTags(parsedWidth: string, unit: string, className: string, breakpoint: number, forceOWADesktop: boolean) {
+export function toMediaQueryStyleTags(parsedWidth: string, unit: string, className: string, breakpoint: number | undefined, forceOWADesktop: boolean) {
   const baseMediaQuery = `.${className} {
       width: ${parsedWidth}${unit} !important;
       max-width: ${parsedWidth}${unit};

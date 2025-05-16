@@ -1,5 +1,6 @@
-import MjmlAccordionTitle from 'mjml-accordion-snyk'
+import type { AccordionTitleConstructor, AccordionTitleAllowedAttributes } from 'mjml-accordion-snyk'
+import { AccordionTitle } from 'mjml-accordion-snyk'
 
 import setupMjmlComponent from '../helper/setupMjmlComponent'
 
-export default setupMjmlComponent(MjmlAccordionTitle)
+export default setupMjmlComponent<AccordionTitleConstructor, typeof AccordionTitleAllowedAttributes>(AccordionTitle)

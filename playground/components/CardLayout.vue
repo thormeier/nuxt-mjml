@@ -1,5 +1,7 @@
 <template>
-  <mjml :used-fonts="['Inter', 'Droid Sans', 'helvetica']">
+  <mjml
+    :used-fonts="['Inter', 'Droid Sans']"
+  >
     <mj-head>
       <mj-title>Hello, Cards Layout!</mj-title>
     </mj-head>

@@ -2,6 +2,7 @@ import { h, defineComponent } from '@vue/runtime-core'
 
 export default defineComponent({
   setup(_, { slots }) {
-    return () => h('div', slots.default())
+    const slotContent = slots.default ? slots.default() : ''
+    return () => h('div', slotContent)
   },
 })
