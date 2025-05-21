@@ -36,11 +36,10 @@ function removeVueHtmlComments(input: string): string {
 }
 
 function cleanButtonVml(input: string): string {
-  // Empty comments keep the child count the same, solving hydration issues.
-  return input.replace(/<!--\[if mso\]><\/span>/g, '<!-- --></span>')
+  return input.replace(/<!--\[if mso\]><\/span>/g, '</span>')
     .replace(
       /<span class="mj-button-inner"><!\[endif\]-->/g,
-      '<span class="mj-button-inner"><!-- -->',
+      '<span class="mj-button-inner">',
     )
 }
 
