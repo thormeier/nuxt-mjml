@@ -36,11 +36,11 @@ function removeVueHtmlComments(input: string): string {
 }
 
 function cleanButtonVml(input: string): string {
-  return input.replace(/<!--\[if mso\]><\/span>/g, '</span>')
-    .replace(
-      /<span class="mj-button-inner"><!\[endif\]-->/g,
-      '<span class="mj-button-inner">',
-    )
+  return input.replace(
+    /<!\[endif\]--><span class="mj-button-inner"(.*)>(.*)<\/span><!--\[if mso\]>/g,
+    '<span class="mj-button-inner"$1>$2</span>',
+  )
+    .replace('.mj-button-inner{display:none;}', '')
 }
 
 export default defineNitroPlugin((nitroApp) => {

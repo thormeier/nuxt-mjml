@@ -126,6 +126,8 @@ export default defineComponent<{
             .ExternalClass div{
               line-height: 100%;
             }
+            /* Double-rendering mj-button fix. */
+            .mj-button-inner{display:none;}
           `,
             },
           ],

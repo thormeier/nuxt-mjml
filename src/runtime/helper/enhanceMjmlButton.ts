@@ -81,7 +81,7 @@ function generateOutlookButton(height: number, fontSize: number, fontFamily: str
             <table cellspacing="0" cellpadding="0" border="0" width="auto" style="margin: 0;padding: 0;border-spacing: 0;overflow: hidden;width: auto;height:${height - 3}px;background-color:#0ff;" height="${height - 3}">
               <tr>
                 <td style="color:${textColor};height:${height}px;line-height:${fontSize}px;font-family:${fontFamily};font-size:${fontSize}px;margin:0;padding:0;padding-left:2px;padding-right:2px;font-weight: normal;background-color:${fillColor};border-top:1px solid ${borderColor};border-bottom:1px solid ${borderColor};">
-                  <span class="mj-button-inner">${content}</span>
+                  ${content}
                 </td>
               </tr>
             </table>
@@ -130,7 +130,7 @@ export function enhanceMjmlButton(dom: string, mjmlComponentInstance: Ref<MjButt
 
   dom = dom.replace('<table', `
     <!--[if mso]>
-      ${generateOutlookButton(buttonHeight, fontSize, fontFamily, usedBorderRadius, borderColor, backgroundColor, textColor, '<![endif]--><!--[SLOT CONTENT]--><!--[if mso]>', (href || '#').toString())}
+      ${generateOutlookButton(buttonHeight, fontSize, fontFamily, usedBorderRadius, borderColor, backgroundColor, textColor, '<![endif]--><span class="mj-button-inner"><!--[SLOT CONTENT]--></span><!--[if mso]>', (href || '#').toString())}
     <![endif]-->
     <!--[if !mso]><!--><table
   `) + '<!--<![endif]-->'
