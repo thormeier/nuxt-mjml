@@ -37,6 +37,7 @@ function removeVueHtmlComments(input: string): string {
 
 function cleanButtonVml(input: string): string {
   return input.replace(
+    // eslint-disable-next-line regexp/no-super-linear-backtracking
     /<!\[endif\]--><span class="mj-button-inner"(.*)>(.*)<\/span><!--\[if mso\]>/g,
     '<span class="mj-button-inner"$1>$2</span>',
   )
