@@ -20,7 +20,29 @@
             height="34px"
             inner-padding="0 25px"
           >
-            Testing buttons is fun! 1
+            <table
+              cellspacing="0"
+              cellpadding="0"
+              border="0"
+            >
+              <tbody>
+                <tr>
+                  <td
+                    valign="middle"
+                    style="padding-right: 8px"
+                  >
+                    Testing buttons is fun!
+                  </td>
+                  <td valign="middle">
+                    <mj-image
+                      src="/images/email/button-small-arrow-right.png"
+                      width="20px"
+                      height="20px"
+                    />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </mj-button>
         </mj-column>
       </mj-section>
