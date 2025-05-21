@@ -37,7 +37,7 @@ function removeVueHtmlComments(input: string): string {
 
 function cleanButtonVml(input: string): string {
   return input.replace(
-    /<!\[endif\]--><span class="mj-button-inner"(.*)<\/span><!--\[if mso\]>/gis,
+    /<!\[endif\]--><span class="mj-button-inner"(.*?)<\/span><!--\[if mso\]>/gis,
     '<span class="mj-button-inner"$1</span>',
   )
     .replace('.mj-button-inner{display:none;}', '')
