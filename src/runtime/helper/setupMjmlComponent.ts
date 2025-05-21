@@ -117,7 +117,7 @@ export default function setupMjmlComponent<
 
         if (mjmlComponent.endingTag) {
           // This comment node indicates the rendering part that a slotted element should go here.
-          args.content = '{{[SLOT CONTENT]}}'
+          args.content = '<!--[SLOT CONTENT]-->'
         }
 
         return args
@@ -134,7 +134,7 @@ export default function setupMjmlComponent<
           newValue.renderChildren = (_: BodyComponent<object>[], options: { renderer: MjmlChildRenderFunction }) => {
             childRenderFunction.value = options.renderer
 
-            return '{{[SLOT CONTENT]}}'
+            return '<!--[SLOT CONTENT]-->'
           }
         }
       })
@@ -143,7 +143,7 @@ export default function setupMjmlComponent<
         mjmlComponentInstance.value.renderChildren = (_: BodyComponent<object>[], options: { renderer: MjmlChildRenderFunction }) => {
           childRenderFunction.value = options && options.renderer ? options.renderer : (component: BodyComponent<object>) => component.render()
 
-          return '{{[SLOT CONTENT]}}'
+          return '<!--[SLOT CONTENT]-->'
         }
       }
 

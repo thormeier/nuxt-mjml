@@ -35,6 +35,15 @@ function removeVueHtmlComments(input: string): string {
   return input.replace(/<!--\]-->|<!--\[-->/g, '')
 }
 
+function cleanButtonVml(input: string): string {
+  // Empty comments keep the child count the same, solving hydration issues.
+  return input.replace(/<!--\[if mso\]><\/span>/g, '<!-- --></span>')
+    .replace(
+      /<span class="mj-button-inner"><!\[endif\]-->/g,
+      '<span class="mj-button-inner"><!-- -->',
+    )
+}
+
 export default defineNitroPlugin((nitroApp) => {
   const config = useRuntimeConfig()
   const routeMatcher = config?.public?.mjml?.serverOnlyRouteMatcher
@@ -90,15 +99,15 @@ export default defineNitroPlugin((nitroApp) => {
         margin: 13px 0;
       }
     </style>
-    <!–[if mso]>
+    <!-–[if mso]>
       <style type="text/css"> body, table, td, tr, p, a, h1, h2, h3, {font-family: Helvetica, Arial, sans-serif !important;} </style>
-    <![endif]–>
+    <![endif]-–>
     <!--[if mso]>
           <noscript>
           <xml>
           <o:OfficeDocumentSettings>
             <o:AllowPNG/>
-            <o:PixelsPerInch>96</o:PixelsPerInch>
+            <o:PixelsPerInch>150</o:PixelsPerInch>
           </o:OfficeDocumentSettings>
           </xml>
           </noscript>
@@ -109,10 +118,11 @@ export default defineNitroPlugin((nitroApp) => {
           </style>
           <![endif]-->
       `)
+    // We need to use 150 DPI for the entire thing, otherwise rounded corners don't work for buttons.
 
     // Make all URLs absolute. Split by commas in case stuff like Fastly sends whacky stuff.
     const host = 'https://' + getRequestHost(event, { xForwardedHost: true }).split(',')[0]
 
-    response.body = removeVueHtmlComments(removeScriptTags(wrapFontsForOutlook(convertToAbsoluteUrls(response.body, host))))
+    response.body = cleanButtonVml(removeVueHtmlComments(removeScriptTags(wrapFontsForOutlook(convertToAbsoluteUrls(response.body, host)))))
   })
 })
