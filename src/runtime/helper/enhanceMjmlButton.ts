@@ -3,7 +3,7 @@ import type { Ref } from '@vue/runtime-core'
 import type MjButton from 'mjml-button-snyk'
 import { extractBorderColor } from './extractBorderColor'
 
-function generateVShapeTagFill(borderRadius: number, height: number, fillColor: string, left: number) {
+function generateVShapeTagFill(borderRadius: number, height: number, fillColor: string, left: number, href: string) {
   return `
     <v:shape
       width="${borderRadius * 1.5625}"
@@ -16,10 +16,11 @@ function generateVShapeTagFill(borderRadius: number, height: number, fillColor: 
       xmlns:v="urn:schemas-microsoft-com:vml"
       xmlns:w="urn:schemas-microsoft-com:office:word"
       style="width:${borderRadius * 1.5625};height:${height * 1.5625};position:relative;top:0.5;left:${left};"
+      href="${href}"
     >`
 }
 
-function generateVShapeTagBorder(borderRadius: number, height: number, borderColor: string) {
+function generateVShapeTagBorder(borderRadius: number, height: number, borderColor: string, href: string) {
   return `
     <v:shape
       width="${borderRadius * 1.5625}"
@@ -33,36 +34,37 @@ function generateVShapeTagBorder(borderRadius: number, height: number, borderCol
       xmlns:v="urn:schemas-microsoft-com:vml"
       xmlns:w="urn:schemas-microsoft-com:office:word"
       style="width:${borderRadius * 1.5625};height:${height * 1.5625};position:relative;top:0.5;left:0;"
+      href="${href}"
     >`
 }
 
-function generateVShapesLeft(borderRadius: number, height: number, borderColor: string, fillColor: string) {
+function generateVShapesLeft(borderRadius: number, height: number, borderColor: string, fillColor: string, href: string) {
   const r = Math.round(borderRadius)
   const h = Math.round(height)
   const r2 = Math.round(r / 2)
   const br = Math.round(height - (borderRadius / 2))
   const hr = Math.round(height - r)
   return `
-    ${generateVShapeTagFill(r, h, fillColor, 1)}
+    ${generateVShapeTagFill(r, h, fillColor, 1, href)}
       <v:path v="m ${r},0 c 8,0,0,8,0,${r} l 0,${hr} c 0,${br},${r2},${h},${r},${h} x"/>
     </v:shape>
-    ${generateVShapeTagBorder(r, h, borderColor)}
+    ${generateVShapeTagBorder(r, h, borderColor, href)}
       <v:path v="m ${r},0 c 8,0,0,8,0,${r} l 0,${hr} c 0,${br},${r2},${h},${r},${h}"/>
     </v:shape>
   `
 }
 
-function generateVShapesRight(borderRadius: number, height: number, borderColor: string, fillColor: string) {
+function generateVShapesRight(borderRadius: number, height: number, borderColor: string, fillColor: string, href: string) {
   const r = Math.round(borderRadius)
   const h = Math.round(height)
   const r2 = Math.round(r / 2)
   const br = Math.round(height - (borderRadius / 2))
   const hr = Math.round(height - r)
   return `
-    ${generateVShapeTagFill(r, h, fillColor, -1)}
+    ${generateVShapeTagFill(r, h, fillColor, -1, href)}
       <v:path v="m 0,0 c ${r2},0,${r},${r2},${r},${r} l ${r},${hr} c ${r},${br},${r2},${h},0,${h} x"/>
     </v:shape>
-    ${generateVShapeTagBorder(r, h, borderColor)}
+    ${generateVShapeTagBorder(r, h, borderColor, href)}
       <v:path v="m 0,0 c ${r2},0,${r},${r2},${r},${r} l ${r},${hr} c ${r},${br},${r2},${h},0,${h}"/>
     </v:shape>
   `
@@ -74,21 +76,22 @@ function generateOutlookButton(height: number, fontSize: number, fontFamily: str
     <tbody style="margin: 0;padding: 0;">
       <tr style="margin: 0;padding: 0;">
         <td style="margin:0;padding:0;font-size:0;width:${borderRadius}px;height:${height}px;line-height:0;">
-          ${generateVShapesLeft(borderRadius, height, borderColor, fillColor)}
+          ${generateVShapesLeft(borderRadius, height, borderColor, fillColor, href)}
         </td>
         <td style="margin:0;padding:0;font-size:0;width:${borderRadius}px;height:${height}px;line-height:0;">
-          <a href="${href}">
             <table cellspacing="0" cellpadding="0" border="0" width="auto" style="margin: 0;padding: 0;border-spacing: 0;overflow: hidden;width: auto;height:${height - 3}px;background-color:#0ff;" height="${height - 3}">
               <tr>
                 <td style="color:${textColor};height:${height}px;line-height:${fontSize}px;font-family:${fontFamily};font-size:${fontSize}px;margin:0;padding:0;padding-left:2px;padding-right:2px;font-weight: normal;background-color:${fillColor};border-top:1px solid ${borderColor};border-bottom:1px solid ${borderColor};">
-                  ${content}
+                  <a href="${href}" target="_blank" style="line-height:${height}px;text-decoration:none;color:${textColor};">
+                    ${content}
+                  </a>
                 </td>
               </tr>
             </table>
           </a>
         </td>
         <td style="margin:0;padding:0;font-size:0;width:${borderRadius}px;height:${height}px;line-height:0;">
-          ${generateVShapesRight(borderRadius, height, borderColor, fillColor)}
+          ${generateVShapesRight(borderRadius, height, borderColor, fillColor, href)}
         </td>
       </tr>
     </tbody>
@@ -143,7 +146,7 @@ export function enhanceMjmlButton(dom: string, mjmlComponentInstance: Ref<MjButt
       .replace(/background\s*:[^;"]*;?/gi, '')
       .trim()
 
-    const newStyle = `${cleanedStyle}${cleanedStyle.endsWith(';') || cleanedStyle === '' ? '' : ';'}position:relative;top:2px;`
+    const newStyle = `${cleanedStyle}${cleanedStyle.endsWith(';') || cleanedStyle === '' ? '' : ';'}position:relative;top:2px;line-height:${buttonHeight}px`
 
     return `${prefix}${newStyle}"`
   })
