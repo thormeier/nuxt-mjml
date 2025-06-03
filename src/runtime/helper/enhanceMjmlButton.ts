@@ -146,7 +146,7 @@ export function enhanceMjmlButton(dom: string, mjmlComponentInstance: Ref<MjButt
       .replace(/background\s*:[^;"]*;?/gi, '')
       .trim()
 
-    const newStyle = `${cleanedStyle}${cleanedStyle.endsWith(';') || cleanedStyle === '' ? '' : ';'}position:relative;top:2px;line-height:${buttonHeight}px`
+    const newStyle = `${cleanedStyle}${cleanedStyle.endsWith(';') || cleanedStyle === '' ? '' : ';'}position:relative;top:2px;`
 
     return `${prefix}${newStyle}"`
   })
