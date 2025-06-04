@@ -81,8 +81,8 @@ function generateOutlookButton(height: number, fontSize: number, fontFamily: str
         <td style="margin:0;padding:0;font-size:0;width:${borderRadius}px;height:${height}px;line-height:0;">
             <table cellspacing="0" cellpadding="0" border="0" width="auto" style="margin: 0;padding: 0;border-spacing: 0;overflow: hidden;width: auto;height:${height - 3}px;background-color:#0ff;" height="${height - 3}">
               <tr>
-                <td style="color:${textColor};height:${height}px;line-height:${fontSize}px;font-family:${fontFamily};font-size:${fontSize}px;margin:0;padding:0;padding-left:2px;padding-right:2px;font-weight: normal;background-color:${fillColor};border-top:1px solid ${borderColor};border-bottom:1px solid ${borderColor};">
-                  <a href="${href}" target="_blank" style="line-height:${height}px;text-decoration:none;color:${textColor};">
+                <td valign="middle"  style="color:${textColor};height:${height}px;line-height:${fontSize}px;font-family:${fontFamily};font-size:${fontSize}px;margin:0;padding:0;padding-left:2px;padding-right:2px;font-weight: normal;background-color:${fillColor};border-top:1px solid ${borderColor};border-bottom:1px solid ${borderColor};">
+                  <a href="${href}" target="_blank" style="text-decoration:none;color:${textColor};text-align:center;vertical-align:middle;">
                     ${content}
                   </a>
                 </td>
@@ -146,7 +146,7 @@ export function enhanceMjmlButton(dom: string, mjmlComponentInstance: Ref<MjButt
       .replace(/background\s*:[^;"]*;?/gi, '')
       .trim()
 
-    const newStyle = `${cleanedStyle}${cleanedStyle.endsWith(';') || cleanedStyle === '' ? '' : ';'}position:relative;top:2px;`
+    const newStyle = `${cleanedStyle}${cleanedStyle.endsWith(';') || cleanedStyle === '' ? '' : ';'}position:relative;text-align:center;vertical-align:middle;`
 
     return `${prefix}${newStyle}"`
   })
